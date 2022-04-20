@@ -1,6 +1,14 @@
-def main():
-    pass
+from flask import Flask
 
 
-if __name__ == '__main__':
-    main()
+def create_app():
+    app = Flask(__name__)
+
+    @app.route('/v1/testing')
+    def test():
+        return 'Testing'
+
+    return app
+
+
+app = create_app()
