@@ -1,0 +1,23 @@
+name: Pylint
+
+on: 
+  push:
+    branches-ignore: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - run: pip3 install -U pip setuptools
+    - run: pip3 install -U -r requirements.txt
+    - run: pylint --rcfile=pylint.rc src/
