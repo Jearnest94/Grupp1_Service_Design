@@ -1,3 +1,7 @@
+"""
+Flask API main file
+"""
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
