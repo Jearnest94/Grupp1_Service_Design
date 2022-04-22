@@ -1,0 +1,63 @@
+create table movie
+(
+    Poster_Link   TEXT,
+    Series_Title  TEXT,
+    Released_Year INTEGER,
+    Certificate   TEXT,
+    Runtime       TEXT,
+    Genre         TEXT,
+    IMDB_Rating   REAL,
+    Overview      TEXT,
+    Meta_score    INTEGER,
+    Director      TEXT,
+    Star1         TEXT,
+    Star2         TEXT,
+    Star3         TEXT,
+    Star4         TEXT,
+    No_of_Votes   INTEGER,
+    Gross         TEXT,
+    movie_id      INTEGER
+        constraint movie_pk
+            primary key autoincrement
+);
+
+create unique index movie_id_uindex
+    on movie (movie_id);
+
+create table review
+(
+    id       INTEGER not null
+        primary key,
+    text     VARCHAR(50),
+    rating   INTEGER,
+    user_id  INTEGER,
+    movie_id integer
+        references movie
+);
+
+create table sqlite_master
+(
+    type     text,
+    name     text,
+    tbl_name text,
+    rootpage int,
+    sql      text
+);
+
+create table sqlite_sequence
+(
+    name,
+    seq
+);
+
+create table user
+(
+    id        INTEGER not null
+        primary key,
+    public_id VARCHAR(50)
+        unique,
+    name      VARCHAR(50),
+    password  VARCHAR(80),
+    admin     BOOLEAN
+);
+

@@ -156,6 +156,7 @@ def get_all_reviews(current_user):
         review_data['id'] = review.id
         review_data['text'] = review.text
         review_data['rating'] = review.rating
+        review_data['movie_id'] = review.movie_id
         output.append(review_data)
 
     return jsonify({'reviews': output})
@@ -173,6 +174,7 @@ def get_one_review(current_user, review_id):
     review_data['id'] = review.id
     review_data['text'] = review.text
     review_data['rating'] = review.rating
+    review_data['movie_id'] = review.movie_id
 
     return jsonify(review_data)
 
@@ -181,7 +183,7 @@ def get_one_review(current_user, review_id):
 @token_required
 def create_review(current_user):
     data = request.get_json()
-    new_review = Review(text=data['text'], rating=data['rating'], user_id=current_user.id)
+    new_review = Review(text=data['text'], rating=data['rating'], movie_id=data['movie_id'], user_id=current_user.id)
     from app import db
     db.session.add(new_review)
     db.session.commit()

@@ -14,4 +14,5 @@ class Review(db.Model):
     text = db.Column(db.String(50))
     rating = db.Column(db.Integer)
     user_id = db.Column(db.Integer)
+    movie_id = db.Column(db.Integer)
 
