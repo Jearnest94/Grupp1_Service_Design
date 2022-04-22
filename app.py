@@ -16,6 +16,12 @@ def create_app():
 
     db.init_app(app)
 
+    from blueprints.open import bp_open
+    app.register_blueprint(bp_open)
+
+    # from blueprints.user import bp_user
+    # app.register_blueprint(bp_user)
+
     return app
 
 
