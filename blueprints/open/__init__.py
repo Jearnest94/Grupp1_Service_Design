@@ -1,5 +1,4 @@
 from flask import Blueprint
-from app import db
 from models import User
 from flask import Flask, request, jsonify
 import uuid
@@ -11,12 +10,32 @@ bp_open = Blueprint('bp_open', __name__)
 
 @bp_open.get('/user')
 def get_all_users():
-    return ''
+    users = User.query.all()
+    output = []
+    for user in users:
+        user_data = {}
+        user_data['public_id'] = user.public_id
+        user_data['name'] = user.name
+        user_data['password'] = user.password
+        user_data['admin'] = user.admin
+        output.append(user_data)
+    return jsonify({'users': output})
 
 
-@bp_open.get('/user/<user_id>')
-def get_one_user():
-    return ''
+@bp_open.get('/user/<public_id>')
+def get_one_user(public_id):
+    user = User.query.filter_by(public_id=public_id).first()
+
+    if not user:
+        return jsonify({'message': 'No user found!'})
+
+    user_data = {}
+    user_data['public_id'] = user.public_id
+    user_data['name'] = user.name
+    user_data['password'] = user.password
+    user_data['admin'] = user.admin
+
+    return jsonify({'user': user_data})
 
 
 @bp_open.post('/user')
@@ -30,11 +49,29 @@ def create_user():
     return jsonify({'message': 'New user created!'})
 
 
-@bp_open.put('/user/<user_id>')
-def promote_user():
-    return ''
+@bp_open.put('/user/<public_id>')
+def promote_user(public_id):
+    user = User.query.filter_by(public_id=public_id).first()
+
+    if not user:
+        return jsonify({'message': 'No user found!'})
+
+    user.admin = True
+    from app import db
+    db.session.commit()
+
+    return jsonify({'message': 'The user has been promoted!'})
 
 
-@bp_open.delete('/user/<user_id>')
-def delete_user():
-    return ''
+@bp_open.delete('/user/<public_id>')
+def delete_user(public_id):
+    user = User.query.filter_by(public_id=public_id).first()
+
+    if not user:
+        return jsonify({'message': 'No user found!'})
+
+    from app import db
+    db.session.delete(user)
+    db.session.commit()
+
+    return jsonify({'message': 'The user has been deleted!'})
