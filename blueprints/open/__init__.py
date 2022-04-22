@@ -1,5 +1,7 @@
 from flask import Blueprint
-from models import User
+from sqlalchemy import null
+
+from models import User, Review
 from flask import Flask, request, jsonify, make_response
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -35,9 +37,8 @@ def token_required(f):
 @bp_open.get('/user')
 @token_required
 def get_all_users(current_user):
-
     if not current_user.admin:
-        return jsonify({'message': 'Cannot perform that function!'})
+        return jsonify({'message': 'Cannot perform that function! check ur prividividididigeenena '})
 
     users = User.query.all()
 
@@ -55,6 +56,9 @@ def get_all_users(current_user):
 @bp_open.get('/user/<public_id>')
 @token_required
 def get_one_user(current_user, public_id):
+    if not current_user.admin:
+        return jsonify({'message': 'Cannot perform that function! check ur privilegisifazj'})
+
     user = User.query.filter_by(public_id=public_id).first()
 
     if not user:
@@ -72,6 +76,9 @@ def get_one_user(current_user, public_id):
 @bp_open.post('/user')
 @token_required
 def create_user(current_user):
+    if not current_user.admin:
+        return jsonify({'message': 'Cannot perform that function! check ur privilegisifazj'})
+
     data = request.get_json()
     hashed_password = generate_password_hash(data['password'], method='sha256')
     new_user = User(public_id=str(uuid.uuid4()), name=data['name'], password=hashed_password, admin=False)
@@ -84,6 +91,9 @@ def create_user(current_user):
 @bp_open.put('/user/<public_id>')
 @token_required
 def promote_user(current_user, public_id):
+    if not current_user.admin:
+        return jsonify({'message': 'Cannot perform that function! check ur privilegisifazj'})
+
     user = User.query.filter_by(public_id=public_id).first()
 
     if not user:
@@ -99,8 +109,10 @@ def promote_user(current_user, public_id):
 @bp_open.delete('/user/<public_id>')
 @token_required
 def delete_user(current_user, public_id):
-    user = User.query.filter_by(public_id=public_id).first()
+    if not current_user.admin:
+        return jsonify({'message': 'Cannot perform that function! check ur privilegisifazj'})
 
+    user = User.query.filter_by(public_id=public_id).first()
     if not user:
         return jsonify({'message': 'No user found!'})
 
@@ -130,3 +142,80 @@ def login():
         return jsonify({'token': token})
 
     return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
+
+
+@bp_open.get('/review')
+@token_required
+def get_all_reviews(current_user):
+    reviews = Review.query.filter_by(user_id=current_user.id).all()
+
+    output = []
+
+    for review in reviews:
+        review_data = {}
+        review_data['id'] = review.id
+        review_data['text'] = review.text
+        review_data['rating'] = review.rating
+        output.append(review_data)
+
+    return jsonify({'reviews': output})
+
+
+@bp_open.get('/review/<review_id>')
+@token_required
+def get_one_review(current_user, review_id):
+    review = Review.query.filter_by(id=review_id, user_id=current_user.id).first()
+
+    if not review:
+        return jsonify({'message': 'No review found'})
+
+    review_data = {}
+    review_data['id'] = review.id
+    review_data['text'] = review.text
+    review_data['rating'] = review.rating
+
+    return jsonify(review_data)
+
+
+@bp_open.post('/review')
+@token_required
+def create_review(current_user):
+    data = request.get_json()
+    new_review = Review(text=data['text'], rating=data['rating'], user_id=current_user.id)
+    from app import db
+    db.session.add(new_review)
+    db.session.commit()
+
+    return jsonify({'message': 'Review added!'})
+
+
+@bp_open.put('/review/<review_id>')
+@token_required
+def set_rating(current_user, review_id):
+    data = request.get_json()
+    review = Review.query.filter_by(id=review_id, user_id=current_user.id).first()
+
+    if not review:
+        return jsonify({'message': 'No review found'})
+
+    review.rating = data['rating']
+    from app import db
+    db.session.commit()
+
+    return jsonify({'message': 'Rating adjusted.'})
+
+
+@bp_open.delete('/review/<review_id>')
+@token_required
+def delete_review(current_user, review_id):
+    review = Review.query.filter_by(id=review_id, user_id=current_user.id).first()
+
+    if not review:
+        return jsonify({'message': 'What no!? What do we delete+???'})
+
+    from app import db
+    db.session.delete(review)
+    db.session.commit()
+
+    return jsonify({'message': 'Review eradicated'})
+
