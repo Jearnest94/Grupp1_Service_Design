@@ -3,9 +3,8 @@ Flask API main file
 """
 
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy()
+from models import db
 
 
 def create_app():
@@ -18,6 +17,9 @@ def create_app():
 
     from blueprints.open import bp_open
     app.register_blueprint(bp_open)
+
+    from blueprints.movie import bp_movie
+    app.register_blueprint(bp_movie)
 
     # from blueprints.user import bp_user
     # app.register_blueprint(bp_user)
