@@ -1,3 +1,7 @@
+"""
+Bla bla bla
+"""
+
 from flask import Blueprint
 
 from models import Movie
@@ -5,7 +9,7 @@ from flask import Flask, request, jsonify, make_response
 
 bp_movie = Blueprint('bp_movie', __name__)
 
-@bp_movie.get('/movie')
+@bp_movie.get('/api/v1.0/movie')
 def get_all_movies():
     movies = Movie.query.all()
 
@@ -25,46 +29,45 @@ def get_all_movies():
         output.append(movie_data)
     return jsonify({'movie': output})
 
-@bp_movie.post('/movie')
+
+@bp_movie.post('/api/v1.0/movie')
 def create_movie():
-    series_title = request.get_json() #Vad ska jag hämta här?
-    released_year = request.get_json()
-    runtime = request.get_json()
-    genre = request.get_json()
-    imdb_rating = request.get_json()
-    overview = request.get_json()
-    director = request.get_json()
-    star1 = request.get_json()
-    new_movie = Movie(Series_Title=series_title, Released_Year=released_year, Runtime=runtime, Genre=genre, IMDB_Rating=imdb_rating, Overview=overview, Director=director, Star1=star1)
+    data = request.get_json()
+
+    new_movie = Movie(Series_Title=data['Series_Title'], Released_Year=data['Released_Year'], Runtime=data['Runtime'], Genre=data['Genre'], IMDB_Rating=data['IMDB_Rating'], Overview=data['Overview'], Director=data['Director'], Star1=data['Star1'])
     from app import db
     db.session.add(new_movie)
     db.session.commit()
-    return jsonify({f'message': 'Movie' + series_title + 'added!'})
+    return jsonify({'message': f'The movie {new_movie.Series_Title} with movie_id {new_movie.movie_id} added!'})
 
-@bp_movie.put('/movie/<series_title>') #Vad ska jag ha för värde här?
-def alter_movie_details(series_title):
+@bp_movie.put('/api/v1.0/movie/<movie_id>') #Vad ska jag ha för värde här?
+def alter_movie_details(movie_id):
 
-    movie = Movie.query.filter_by(Series_Title=series_title).first()
+    movie = Movie.query.filter_by(movie_id=movie_id).first()
+    data = request.get_json()
+    new_movie = Movie(Series_Title=data['Series_Title'], Released_Year=data['Released_Year'], Runtime=data['Runtime'], Genre=data['Genre'], IMDB_Rating=data['IMDB_Rating'], Overview=data['Overview'], Director=data['Director'], Star1=data['Star1'])
 
     if not movie:
-        return jsonify({f'message': 'Movie' + series_title + 'not found!'})
+        return jsonify({f'message': 'Movie not found!'})
 
-    # Hur gör jag här?
+    movie.update(new_movie)
+
+    from app import db
+    db.session.commit()
+    return jsonify({'message': f'The movie {movie.Series_Title} with movie_id {movie.movie_id} updated!'})
 
 
-@bp_movie.delete('/movie/<series_title>')
-def delete_movie(series_title):
-    movie = Movie.query.filter_by(Series_Title=series_title).first()
+@bp_movie.delete('/api/v1.0/movie/<movie_id>')
+def delete_movie(movie_id):
+    movie = Movie.query.filter_by(movie_id=movie_id).first()
     if not movie:
-        return jsonify({"message": "The movie" + series_title + "not found!"})
-
-    # GAAAAAAAAHHHH
+        return jsonify({"message": f'{movie.Series_Title} with movie_id {movie.movie_id} not found!'})
 
     from app import db
     db.session.delete(movie)
     db.session.commit()
 
-    return jsonify({f"message": "The movie" + series_title + "has been deleted!"})
+    return jsonify({"message": f'The movie {movie.Series_Title} with movie_id {movie.movie_id} deleted!'})
 
 
 

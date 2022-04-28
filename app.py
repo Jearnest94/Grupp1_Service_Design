@@ -3,9 +3,8 @@ Flask API main file
 """
 
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy()
+from models import db
 
 
 def create_app():
