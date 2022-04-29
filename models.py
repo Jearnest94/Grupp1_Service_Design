@@ -55,5 +55,3 @@ class Movie(db.Model):
         # self.Star4 = other_movie.Star4
         # self.No_of_Votes = other_movie.No_of_Votes
         # self.Gross = other_movie.Gross
-
-
