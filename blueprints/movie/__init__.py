@@ -1,0 +1,75 @@
+"""
+Bla bla bla
+"""
+
+from flask import Blueprint
+
+from models import Movie
+from flask import Flask, request, jsonify, make_response
+
+bp_movie = Blueprint('bp_movie', __name__)
+
+@bp_movie.get('/api/v1.0/movie')
+def get_all_movies():
+    movies = Movie.query.all()
+
+    output = []
+    for movie in movies:
+        movie_data = {}
+        movie_data['movie_id'] = movie.movie_id
+        movie_data['Series_Title'] = movie.Series_Title
+        movie_data['Released_Year'] = movie.Released_Year
+        movie_data['Runtime'] = movie.Runtime
+        movie_data['Genre'] = movie.Genre
+        movie_data['IMDB_Rating'] = movie.IMDB_Rating
+        movie_data['Overview'] = movie.Overview
+        movie_data['Director'] = movie.Director
+        movie_data['Star1'] = movie.Star1
+
+        output.append(movie_data)
+    return jsonify({'movie': output})
+
+
+@bp_movie.post('/api/v1.0/movie')
+def create_movie():
+    data = request.get_json()
+
+    new_movie = Movie(Series_Title=data['Series_Title'], Released_Year=data['Released_Year'], Runtime=data['Runtime'], Genre=data['Genre'], IMDB_Rating=data['IMDB_Rating'], Overview=data['Overview'], Director=data['Director'], Star1=data['Star1'])
+    from app import db
+    db.session.add(new_movie)
+    db.session.commit()
+    return jsonify({'message': f'The movie {new_movie.Series_Title} with movie_id {new_movie.movie_id} added!'})
+
+@bp_movie.put('/api/v1.0/movie/<movie_id>') #Vad ska jag ha för värde här?
+def alter_movie_details(movie_id):
+
+    movie = Movie.query.filter_by(movie_id=movie_id).first()
+    data = request.get_json()
+    new_movie = Movie(Series_Title=data['Series_Title'], Released_Year=data['Released_Year'], Runtime=data['Runtime'], Genre=data['Genre'], IMDB_Rating=data['IMDB_Rating'], Overview=data['Overview'], Director=data['Director'], Star1=data['Star1'])
+
+    if not movie:
+        return jsonify({f'message': 'Movie not found!'})
+
+    movie.update(new_movie)
+
+    from app import db
+    db.session.commit()
+    return jsonify({'message': f'The movie {movie.Series_Title} with movie_id {movie.movie_id} updated!'})
+
+
+@bp_movie.delete('/api/v1.0/movie/<movie_id>')
+def delete_movie(movie_id):
+    movie = Movie.query.filter_by(movie_id=movie_id).first()
+    if not movie:
+        return jsonify({"message": f'{movie.Series_Title} with movie_id {movie.movie_id} not found!'})
+
+    from app import db
+    db.session.delete(movie)
+    db.session.commit()
+
+    return jsonify({"message": f'The movie {movie.Series_Title} with movie_id {movie.movie_id} deleted!'})
+
+
+
+
+
