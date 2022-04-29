@@ -1,7 +1,8 @@
 from flask import Blueprint
 from sqlalchemy import null
 
-from models import User, Review
+
+from models import User, Review, Log
 from flask import Flask, request, jsonify, make_response
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,6 +11,17 @@ import datetime
 from functools import wraps
 
 bp_open = Blueprint('bp_open', __name__)
+
+
+@bp_open.before_request
+def logger():
+    now = datetime.datetime.utcnow()
+    from sqlalchemy.sql.functions import current_user
+    new_log = Log(user=current_user.name, endpoint=request.endpoint, timestamp=now)
+    from app import db
+    db.session.add(new_log)
+    db.session.commit()
+    print(f'API accessed {request.endpoint} \t {now.strftime("%Y-%m-%d %H:%M:%S")}')
 
 
 def token_required(f):
