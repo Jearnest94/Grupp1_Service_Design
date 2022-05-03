@@ -1,4 +1,7 @@
-from flask import Blueprint, request, jsonify
+import json
+
+import pandas as pd
+from flask import Blueprint, request, jsonify, Response
 
 from models import Movie
 
@@ -11,7 +14,7 @@ blueprint = Blueprint('blueprint', __name__)
 #     data = pd.read_csv('imdb_top_1000.csv')
 #     data = data.to_dict('records')
 #     # print({'data': data}, 200)
-#     return {'data': data}, 200
+#     return {'data': data}
 
 
 # @blueprint.route('/movie/rating')
@@ -43,7 +46,7 @@ blueprint = Blueprint('blueprint', __name__)
 @blueprint.route('/api/v1.0/Rating/<float:Rating>')
 def get_all_movies(Rating):
 
-    movies = Movie.query.filter_by(IMBD_Rating=Rating).all()
+    movies = Movie.query.filter_by(IMDB_Rating=Rating).all()
 
     print(movies)
 
@@ -57,7 +60,7 @@ def get_all_movies(Rating):
         movie_data['Certificate'] = movie.Certificate
         movie_data['Runtime'] = movie.Runtime
         movie_data['Genre'] = movie.Genre
-        movie_data['IMBD_Rating'] = movie.IMBD_Rating
+        movie_data['IMDB_Rating'] = movie.IMDB_Rating
         movie_data['Overview'] = movie.Overview
         movie_data['Meta_score'] = movie.Meta_score
         movie_data['Director'] = movie.Director
@@ -70,3 +73,19 @@ def get_all_movies(Rating):
 
         output.append(movie_data)
     return jsonify({'movie': output})
+
+
+# @blueprint.route('/')
+# def get():
+#     return 'Hello, World!'
+#
+#
+# @blueprint.route('/hello')
+# def configure_routes():
+#     return 'Hello, World!'
+
+# @blueprint.route('/get')
+# def second_get():
+#
+#     return 'Hello, World!'
+#     # return Response(json.dumps(data), 200, content_type='application/json')
