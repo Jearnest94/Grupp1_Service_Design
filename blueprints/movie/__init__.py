@@ -38,7 +38,7 @@ def create_movie():
     from app import db
     db.session.add(new_movie)
     db.session.commit()
-    return jsonify({'message': f'The movie {new_movie.Series_Title} with movie_id {new_movie.movie_id} added!'}), 200
+    return jsonify({'message': f'The movie {new_movie.Series_Title} with movie_id {new_movie.movie_id} added!'}), 201
 
 @bp_movie.put('/movie/<movie_id>') #Vad ska jag ha för värde här?
 def alter_movie_details(movie_id):
