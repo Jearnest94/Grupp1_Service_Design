@@ -16,13 +16,13 @@ def create_app():
     db.init_app(app)
 
     from blueprints.open import bp_open
-    app.register_blueprint(bp_open)
+    app.register_blueprint(bp_open, url_prefix='/api/v.1.0')
 
     from blueprints.filter import blueprint
-    app.register_blueprint(blueprint)
+    app.register_blueprint(blueprint, url_prefix='/api/v.1.0')
 
     from blueprints.movie import bp_movie
-    app.register_blueprint(bp_movie)
+    app.register_blueprint(bp_movie, url_prefix='/api/v.1.0')
 
     # from blueprints.user import bp_user
     # app.register_blueprint(bp_user)
