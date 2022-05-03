@@ -9,7 +9,7 @@ from flask import Flask, request, jsonify, make_response
 
 bp_movie = Blueprint('bp_movie', __name__)
 
-@bp_movie.get('/api/v1.0/movie')
+@bp_movie.get('/movie')
 def get_all_movies():
     movies = Movie.query.all()
 
@@ -30,7 +30,7 @@ def get_all_movies():
     return jsonify({'movie': output}), 200
 
 
-@bp_movie.post('/api/v1.0/movie')
+@bp_movie.post('/movie')
 def create_movie():
     data = request.get_json()
 
@@ -40,7 +40,7 @@ def create_movie():
     db.session.commit()
     return jsonify({'message': f'The movie {new_movie.Series_Title} with movie_id {new_movie.movie_id} added!'}), 200
 
-@bp_movie.put('/api/v1.0/movie/<movie_id>') #Vad ska jag ha för värde här?
+@bp_movie.put('/movie/<movie_id>') #Vad ska jag ha för värde här?
 def alter_movie_details(movie_id):
 
     movie = Movie.query.filter_by(movie_id=movie_id).first()
@@ -59,7 +59,7 @@ def alter_movie_details(movie_id):
     return jsonify({'message': f'The movie {movie.Series_Title} with movie_id {movie.movie_id} updated!'}), 200
 
 
-@bp_movie.delete('/api/v1.0/movie/<movie_id>')
+@bp_movie.delete('/movie/<movie_id>')
 def delete_movie(movie_id):
     movie = Movie.query.filter_by(movie_id=movie_id).first()
     if not movie:
