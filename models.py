@@ -1,5 +1,6 @@
-from flask_sqlalchemy import SQLAlchemy
+import datetime
 
+from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
@@ -12,12 +13,21 @@ class User(db.Model):
     admin = db.Column(db.Boolean)
 
 
+
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(50))
     rating = db.Column(db.Integer)
     user_id = db.Column(db.Integer)
     movie_id = db.Column(db.Integer)
+
+
+class Log(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user = db.Column(db.String)
+    endpoint = db.Column(db.String)
+    timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
 
 class Movie(db.Model):
     movie_id = db.Column(db.Integer, primary_key=True, autoincrement=True)

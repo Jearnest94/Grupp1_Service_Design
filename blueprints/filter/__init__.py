@@ -43,7 +43,7 @@ blueprint = Blueprint('blueprint', __name__)
 #
 #
 
-@blueprint.route('/api/v1.0/Rating/<float:Rating>')
+@blueprint.route('/Rating/<float:Rating>')
 def get_all_movies(Rating):
 
     movies = Movie.query.filter_by(IMDB_Rating=Rating).all()
