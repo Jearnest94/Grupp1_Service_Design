@@ -40,6 +40,37 @@ def create_movie():
     db.session.commit()
     return jsonify({'message': f'The movie {new_movie.Series_Title} with movie_id {new_movie.movie_id} added!'}), 201
 
+
+
+"""
+Inte klar ännu
+"""
+@bp_movie.get('/movie/<movie_id>') #Vad ska jag ha för värde här?
+def get_movie(movie_id):
+
+    movie = Movie.query.filter_by(movie_id=movie_id).first()
+    if not movie:
+        return jsonify({f'message': 'Movie not found!'}), 404
+    """
+    output = []
+    for item in movie:
+        movie_data = {}
+        movie_data['movie_id'] = item.movie_id
+        movie_data['Series_Title'] = item.Series_Title
+        movie_data['Released_Year'] = item.Released_Year
+        movie_data['Runtime'] = item.Runtime
+        movie_data['Genre'] = item.Genre
+        movie_data['IMDB_Rating'] = item.IMDB_Rating
+        movie_data['Overview'] = item.Overview
+        movie_data['Director'] = item.Director
+        movie_data['Star1'] = item.Star1
+
+        output.append(movie_data)
+        """
+
+    return jsonify({'movie': output}), 200
+
+
 @bp_movie.put('/movie/<movie_id>') #Vad ska jag ha för värde här?
 def alter_movie_details(movie_id):
 
@@ -49,8 +80,6 @@ def alter_movie_details(movie_id):
 
     data = request.get_json()
     new_movie = Movie(Series_Title=data['Series_Title'], Released_Year=data['Released_Year'], Runtime=data['Runtime'], Genre=data['Genre'], IMDB_Rating=data['IMDB_Rating'], Overview=data['Overview'], Director=data['Director'], Star1=data['Star1'])
-
-
 
     movie.update(new_movie)
 
