@@ -41,34 +41,25 @@ def create_movie():
     return jsonify({'message': f'The movie {new_movie.Series_Title} with movie_id {new_movie.movie_id} added!'}), 201
 
 
-
-"""
-Inte klar ännu
-"""
 @bp_movie.get('/movie/<movie_id>') #Vad ska jag ha för värde här?
-def get_movie(movie_id):
+def get_one_movie(movie_id):
 
     movie = Movie.query.filter_by(movie_id=movie_id).first()
     if not movie:
-        return jsonify({f'message': 'Movie not found!'}), 404
-    """
-    output = []
-    for item in movie:
-        movie_data = {}
-        movie_data['movie_id'] = item.movie_id
-        movie_data['Series_Title'] = item.Series_Title
-        movie_data['Released_Year'] = item.Released_Year
-        movie_data['Runtime'] = item.Runtime
-        movie_data['Genre'] = item.Genre
-        movie_data['IMDB_Rating'] = item.IMDB_Rating
-        movie_data['Overview'] = item.Overview
-        movie_data['Director'] = item.Director
-        movie_data['Star1'] = item.Star1
+        return jsonify({'message': f'Movie with movie_id {movie_id} not found!'}), 404
 
-        output.append(movie_data)
-        """
+    movie_data = {}
+    movie_data['movie_id'] = movie.movie_id
+    movie_data['Series_Title'] = movie.Series_Title
+    movie_data['Released_Year'] = movie.Released_Year
+    movie_data['Runtime'] = movie.Runtime
+    movie_data['Genre'] = movie.Genre
+    movie_data['IMDB_Rating'] = movie.IMDB_Rating
+    movie_data['Overview'] = movie.Overview
+    movie_data['Director'] = movie.Director
+    movie_data['Star1'] = movie.Star1
 
-    return jsonify({'movie': output}), 200
+    return jsonify({'movie': movie_data}), 200
 
 
 @bp_movie.put('/movie/<movie_id>') #Vad ska jag ha för värde här?

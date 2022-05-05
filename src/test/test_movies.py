@@ -1,16 +1,15 @@
 """
 Unit tests for movie endpoint
 """
-import requests
-import json
 
+import json
 from models import Movie
 from .fixture import client
 
-def test_movie_models():
+
+def test_movie_models(client):
     movie = Movie(Series_Title='New Film', Released_Year=1988, Runtime='100 min', Genre='Romantic comedy', IMDB_Rating=7.0, Overview='A good movie', Director='Colin Nutley', Star1='Helena Bergström')
     assert movie.Star1 == 'Helena Bergström'
-
 
 def test_get_movie_status_code(client):
     """
@@ -24,7 +23,7 @@ def test_get_movie_status_code(client):
 
 def test_get_movies(client):
     """
-    Test retrieval of movie
+    Test retrieval of movies
     :param client: App test client from fixture
     :return: None
     """
@@ -34,8 +33,12 @@ def test_get_movies(client):
     first_film = next((item for item in test if item['movie_id'] == 1), None)
     assert first_film["Series_Title"] == "The Shawshank Redemption"
 
-def test_post_movie(client):
-
+def test_post_and_delete_movie(client):
+    """
+    Test post of new movie object, response code, get new movie from db, then delete.
+    :param client: App test client from fixture
+    :return: None
+    """
     url = 'http://localhost:5000/api/v.1.0/movie'
 
     obj_to_post = {
@@ -49,10 +52,11 @@ def test_post_movie(client):
         "Star1": "Nicholas Cage"
     }
 
-    #response = requests.post(url, data=obj_to_post)
-
+    # Check that new movie object has been created
     response = client.post(url, json=obj_to_post)
     assert response.status_code == 201
+
+    # Retrieve movie_id from thr response
     data = response.json
     value = data["message"]
     numbers = []
@@ -60,39 +64,21 @@ def test_post_movie(client):
         if word.isdigit():
             numbers.append(int(word))
     movie_id = numbers[0]
-    response = client.get(f'api/v.1.0/movie/{movie_id}') # Skapa denna funktion
-    print(movie_id)
 
-    # Hur hämtar jag ut movie_id?
+    # Update url and check that new movie is in the db
+    url = f'http://localhost:5000/api/v.1.0/movie/{movie_id}'
 
-    #response = client.post('/api/v.1.0/movie', data=obj_to_post)
-    #from app import db
-    #db.session.add(new_movie)
-    #db.session.commit()
-    #print(movie_post)
-    #assert response.data[''] in response.data
-    #print(response['data'])
+    response2 = client.get(url)
+    data = json.loads(response2.text)
+    film = data['movie']
+    assert film["Series_Title"] == "Test Film"
+    assert film["Star1"] == "Nicholas Cage"
 
-    #assert response[124] == b'Test Film'
+    # Delete
+    response3 = client.delete(url)
+    assert response3.status_code == 200
 
-    #client.post('/api/v.1.0/movie', data=obj_to_post)
-
-    # with app.app_context():
-    # TODO:
-
-
-    # Implement movie/<id> - GET
-    # Make a get call to movie/<id> with the id you got in the response
-    # Check that it is th same as you posted
-    # call movie/<id> - DELETE with the same id to clean things up
-    # Make a get call to movie/<id> with the id you got in the respons to make sure it is now deleted
-
-
-
-
-
-    #assert response == None
-
-# movie = Movie.query.filter_by(Series_Title="Test Film").first()
+    response4 = client.get(url)
+    assert response4.status_code == 404
 
 
