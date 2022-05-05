@@ -8,6 +8,11 @@ from .fixture import client
 
 
 def test_movie_models(client):
+    """
+    Test movie models
+    :param client: App test client from fixture
+    :return: None
+    """
     movie = Movie(Series_Title='New Film', Released_Year=1988, Runtime='100 min', Genre='Romantic comedy', IMDB_Rating=7.0, Overview='A good movie', Director='Colin Nutley', Star1='Helena Bergström')
     assert movie.Star1 == 'Helena Bergström'
 
@@ -80,5 +85,3 @@ def test_post_and_delete_movie(client):
 
     response4 = client.get(url)
     assert response4.status_code == 404
-
-
