@@ -19,6 +19,7 @@ class User(db.Model):
     password = db.Column(db.String(80))
     admin = db.Column(db.Boolean)
     reviews = db.relationship('Review', backref='user')
+    latesttoken = db.Column(db.String(150))
 
 
 class Review(db.Model):

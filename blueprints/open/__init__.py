@@ -40,6 +40,9 @@ def login():
         token = jwt.encode(
             {'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=600)},
             '123secret')
+        from app import db
+        user.latesttoken = token
+        db.session.commit()
         return jsonify({'token': token})
 
     return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
