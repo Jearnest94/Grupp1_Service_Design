@@ -2,7 +2,7 @@ from flask import Blueprint
 from sqlalchemy import null
 
 
-from models import User, Review, Log
+from models import User, Review, Log, Movie
 from flask import Flask, request, jsonify, make_response
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -22,6 +22,27 @@ def logger():
     db.session.add(new_log)
     db.session.commit()
     print(f'API accessed {request.endpoint} \t {now.strftime("%Y-%m-%d %H:%M:%S")}')
+
+
+@bp_open.get('/login')
+def login():
+    auth = request.authorization
+
+    if not auth or not auth.username or not auth.password:
+        return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
+
+    user = User.query.filter_by(name=auth.username).first()
+
+    if not user:
+        return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
+
+    if check_password_hash(user.password, auth.password):
+        token = jwt.encode(
+            {'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=600)},
+            '123secret')
+        return jsonify({'token': token})
+
+    return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
 
 
 def token_required(f):
@@ -135,27 +156,6 @@ def delete_user(current_user, public_id):
     return jsonify({'message': 'The user has been deleted!'})
 
 
-@bp_open.get('/login')
-def login():
-    auth = request.authorization
-
-    if not auth or not auth.username or not auth.password:
-        return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
-
-    user = User.query.filter_by(name=auth.username).first()
-
-    if not user:
-        return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
-
-    if check_password_hash(user.password, auth.password):
-        token = jwt.encode(
-            {'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
-            '123secret')
-        return jsonify({'token': token})
-
-    return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
-
-
 @bp_open.get('/review')
 @token_required
 def get_all_reviews(current_user):
@@ -189,6 +189,45 @@ def get_one_review(current_user, review_id):
     review_data['movie_id'] = review.movie_id
 
     return jsonify(review_data)
+
+
+@bp_open.get('/review/user/<public_id>')
+@token_required
+def get_review_by_user_public_id(current_user, public_id):
+    user = User.query.filter_by(public_id=public_id).first()
+
+    if not user.reviews:
+        return jsonify({'message': 'No reviews found'})
+
+    if not user:
+        return jsonify({'message': 'User not found'})
+
+    output = []
+    for review in user.reviews:
+        review_data = {}
+        review_data['id'] = review.id
+        review_data['text'] = review.text
+        review_data['rating'] = review.rating
+        review_data['movie_id'] = review.movie_id
+        output.append(review_data)
+
+    return jsonify({f'Reviews by user with public_id: {public_id}': output})
+
+
+@bp_open.get('review/movie/<movie_id>')
+@token_required
+def get_reviews_by_movie_id(current_user, movie_id):
+    movie = Movie.query.filter_by(movie_id=movie_id).first()
+    output = []
+
+    for review in movie.reviews:
+        review_data = {}
+        review_data['id'] = review.id
+        review_data['text'] = review.text
+        review_data['rating'] = review.rating
+        review_data['movie_id'] = review.movie_id
+        output.append(review_data)
+    return jsonify({f'Reviews for movie with movie_id: {movie_id}': output})
 
 
 @bp_open.post('/review')
