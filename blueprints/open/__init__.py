@@ -71,7 +71,7 @@ def token_required(f):
 @token_required
 def get_all_users(current_user):
     if not current_user.admin:
-        return jsonify({'message': 'Cannot perform that function! check ur prividividididigeenena '})
+        return jsonify({'message': 'Cannot perform that function! Check your privilegies.'})
 
     users = User.query.all()
 
@@ -90,7 +90,7 @@ def get_all_users(current_user):
 @token_required
 def get_one_user(current_user, public_id):
     if not current_user.admin:
-        return jsonify({'message': 'Cannot perform that function! check ur privilegisifazj'})
+        return jsonify({'message': 'Cannot perform that function! Check your privilegies.'})
 
     user = User.query.filter_by(public_id=public_id).first()
 
@@ -110,22 +110,23 @@ def get_one_user(current_user, public_id):
 @token_required
 def create_user(current_user):
     if not current_user.admin:
-        return jsonify({'message': 'Cannot perform that function! check ur privilegisifazj'})
+        return jsonify({'message': 'Cannot perform that function! Check your privilegies.'})
 
     data = request.get_json()
     hashed_password = generate_password_hash(data['password'], method='sha256')
     new_user = User(public_id=str(uuid.uuid4()), name=data['name'], password=hashed_password, admin=False)
+    username = data['name']
     from app import db
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({'message': 'New user created!'})
+    return jsonify({'message': f'User with username {username} created!'})
 
 
 @bp_open.put('/user/<public_id>')
 @token_required
 def promote_user(current_user, public_id):
     if not current_user.admin:
-        return jsonify({'message': 'Cannot perform that function! check ur privilegisifazj'})
+        return jsonify({'message': 'Cannot perform that function! Check your privilegies.'})
 
     user = User.query.filter_by(public_id=public_id).first()
 
@@ -136,33 +137,34 @@ def promote_user(current_user, public_id):
     from app import db
     db.session.commit()
 
-    return jsonify({'message': 'The user has been promoted!'})
+    return jsonify({'message': f'The user has been promoted to admin.'})
 
 
 @bp_open.delete('/user/<public_id>')
 @token_required
 def delete_user(current_user, public_id):
     if not current_user.admin:
-        return jsonify({'message': 'Cannot perform that function! check ur privilegisifazj'})
+        return jsonify({'message': 'Cannot perform that function! Check your privilegies.'})
 
     user = User.query.filter_by(public_id=public_id).first()
     if not user:
         return jsonify({'message': 'No user found!'})
 
+    username = user['name']
+
     from app import db
     db.session.delete(user)
     db.session.commit()
 
-    return jsonify({'message': 'The user has been deleted!'})
+    return jsonify({'message': f'The user with username {username} has been deleted!'})
 
 
 @bp_open.get('/review')
 @token_required
 def get_all_reviews(current_user):
-    reviews = Review.query.filter_by(user_id=current_user.id).all()
+    reviews = Review.query.all()
 
     output = []
-
     for review in reviews:
         review_data = {}
         review_data['id'] = review.id
@@ -242,7 +244,7 @@ def create_review(current_user):
     return jsonify({'message': 'Review added!'})
 
 
-@bp_open.put('/review/<review_id>')
+@bp_open.put('/review/setrating/<review_id>')
 @token_required
 def set_rating(current_user, review_id):
     data = request.get_json()
@@ -264,11 +266,11 @@ def delete_review(current_user, review_id):
     review = Review.query.filter_by(id=review_id, user_id=current_user.id).first()
 
     if not review:
-        return jsonify({'message': 'What no!? What do we delete+???'})
+        return jsonify({'message': 'Nothing here to delete.'})
 
     from app import db
     db.session.delete(review)
     db.session.commit()
 
-    return jsonify({'message': 'Review eradicated'})
+    return jsonify({'message': f'Review with id {review_id} deleted'})
 
