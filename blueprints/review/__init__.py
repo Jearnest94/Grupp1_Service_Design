@@ -1,7 +1,7 @@
 from flask import Blueprint
 
 from blueprints.open import token_required
-from models import Review
+from models import Review, Movie, User
 from flask import request, jsonify
 
 bp_review = Blueprint('bp_review', __name__)
@@ -89,3 +89,37 @@ def create_review(current_user):
     from app import db
     db.session.add(new_review)
     db.session.commit()
+
+    return jsonify({'message': 'Review added!'})
+
+
+@bp_review.put('/review/setrating/<review_id>')
+@token_required
+def set_rating(current_user, review_id):
+    data = request.get_json()
+    review = Review.query.filter_by(id=review_id).first()
+
+    if not review:
+        return jsonify({'message': 'No review found'})
+
+    review.rating = data['rating']
+    from app import db
+    db.session.commit()
+
+    return jsonify({'message': 'Rating adjusted.'})
+
+
+@bp_review.delete('/review/<review_id>')
+@token_required
+def delete_review(current_user, review_id):
+    review = Review.query.filter_by(id=review_id, user_id=current_user.id).first()
+
+    if not review:
+        return jsonify({'message': 'Nothing here to delete.'})
+
+    from app import db
+    db.session.delete(review)
+    db.session.commit()
+
+    return jsonify({'message': f'Review with id {review_id} deleted'})
+

@@ -9,6 +9,7 @@ from flask import request, jsonify
 
 bp_movie = Blueprint('bp_movie', __name__)
 
+
 @bp_movie.get('/movie')
 def get_all_movies():
     movies = Movie.query.all()
