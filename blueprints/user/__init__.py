@@ -1,8 +1,10 @@
 """
 CRUD for endpoint user
 """
+import uuid
 
 from flask import Blueprint
+from werkzeug.security import generate_password_hash
 
 from controllers.user_control import token_required
 from models import User
@@ -15,7 +17,6 @@ bp_user = Blueprint('bp_user', __name__)
 @token_required
 def function():
     pass
-
 
 
 @bp_user.get('/user')

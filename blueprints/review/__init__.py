@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from blueprints.open import token_required
+from controllers.user_control import token_required
 from models import Review, Movie, User
 from flask import request, jsonify
 

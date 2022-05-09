@@ -1,14 +1,10 @@
 from flask import Blueprint
-from sqlalchemy import null
 
-from controllers.user_control import token_required
-from models import User, Review, Log, Movie
-from flask import Flask, request, jsonify, make_response
-import uuid
-from werkzeug.security import generate_password_hash, check_password_hash
+from models import User, Log
+from flask import request, jsonify, make_response
+from werkzeug.security import check_password_hash
 import jwt
 import datetime
-from functools import wraps
 
 bp_open = Blueprint('bp_open', __name__)
 
