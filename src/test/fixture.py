@@ -40,4 +40,5 @@ class AuthActions(object):
 
 @pytest.fixture
 def auth(client):
+
     return AuthActions(client)

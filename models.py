@@ -5,28 +5,29 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
+class Log(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user = db.Column(db.String)
+    endpoint = db.Column(db.String)
+    timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     public_id = db.Column(db.String(50), unique=True)
-    name = db.Column(db.String(50))
+    name = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
     admin = db.Column(db.Boolean)
-
+    reviews = db.relationship('Review', backref='user')
+    latesttoken = db.Column(db.String(150))
 
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(50))
     rating = db.Column(db.Integer)
-    user_id = db.Column(db.Integer)
-    movie_id = db.Column(db.Integer)
-
-
-class Log(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user = db.Column(db.String)
-    endpoint = db.Column(db.String)
-    timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    movie_id = db.Column(db.Integer, db.ForeignKey('movie.movie_id'))
 
 
 class Movie(db.Model):
@@ -47,21 +48,14 @@ class Movie(db.Model):
     Star4 = db.Column(db.Text)
     No_of_Votes = db.Column(db.Integer)
     Gross = db.Column(db.Text)
+    reviews = db.relationship('Review', backref='movie')
 
     def update(self, other_movie):
-        # self.Poster_Link = other_movie.Poster_Link
         self.Series_Title = other_movie.Series_Title
         self.Released_Year = other_movie.Released_Year
-        # self.Certificate = other_movie.Certificate
         self.Runtime = other_movie.Runtime
         self.Genre = other_movie.Genre
         self.IMDB_Rating = other_movie.IMDB_Rating
         self.Overview = other_movie.Overview
-        # self.Meta_score = other_movie.Meta_score
         self.Director = other_movie.Director
         self.Star1 = other_movie.Star1
-        # self.Star2 = other_movie.Star2
-        # self.Star3 = other_movie.Star3
-        # self.Star4 = other_movie.Star4
-        # self.No_of_Votes = other_movie.No_of_Votes
-        # self.Gross = other_movie.Gross
