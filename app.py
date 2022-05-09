@@ -1,9 +1,13 @@
 """
 Flask API main file
 """
+import os
 
 from flask import Flask
 from models import db
+from dotenv import load_dotenv
+
+load_dotenv('.env')
 
 # from flask_swagger_ui import get_swaggerui_blueprint
 
@@ -23,7 +27,7 @@ def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = '123secret'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 
     db.init_app(app)
 
@@ -39,7 +43,7 @@ def create_app():
     from blueprints.user import bp_user
     app.register_blueprint(bp_user, url_prefix='/api/v1.0')
 
-    #app.register_blueprint(SWAGGER_BLUEPRINT, url_prefix=SWAGGER_URL)
+    # app.register_blueprint(SWAGGER_BLUEPRINT, url_prefix=SWAGGER_URL)
 
     # from blueprints.user import bp_user
     # app.register_blueprint(bp_user)
