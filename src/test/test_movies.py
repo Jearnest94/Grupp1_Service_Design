@@ -22,7 +22,7 @@ def test_get_movie_status_code(client):
     :param client: App test client from fixture
     :return: None
     """
-    response = client.get('api/v.1.0/movie')
+    response = client.get('api/v1.0/movie')
     assert response.status_code == 200
     assert b'12 Angry Men' in response.data
 
@@ -32,7 +32,7 @@ def test_get_movies(client):
     :param client: App test client from fixture
     :return: None
     """
-    response = client.get('/api/v.1.0/movie')
+    response = client.get('/api/v1.0/movie')
     data = json.loads(response.text)
     test = data['movie']
     first_film = next((item for item in test if item['movie_id'] == 1), None)
@@ -44,7 +44,7 @@ def test_post_and_delete_movie(client):
     :param client: App test client from fixture
     :return: None
     """
-    url = 'http://localhost:5000/api/v.1.0/movie'
+    url = 'http://localhost:5000/api/v1.0/movie'
 
     obj_to_post = {
         "Series_Title": "Test Film",
@@ -71,7 +71,7 @@ def test_post_and_delete_movie(client):
     movie_id = numbers[0]
 
     # Update url and check that new movie is in the db
-    url = f'http://localhost:5000/api/v.1.0/movie/{movie_id}'
+    url = f'http://localhost:5000/api/v1.0/movie/{movie_id}'
 
     response2 = client.get(url)
     data = json.loads(response2.text)

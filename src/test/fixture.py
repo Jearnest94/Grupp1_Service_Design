@@ -30,12 +30,12 @@ class AuthActions(object):
 
     def login(self, username='admin', password='123'):
         return self._client.post(
-            '/api/v.1.0/login',
+            '/api/v1.0/login',
             data={'username': username, 'password': password})
 
     # Har vi en sådan endpoint?
     def logout(self):
-        return self._client.get('/api/v.1.0/logout')
+        return self._client.get('/api/v1.0/logout')
 
 
 @pytest.fixture

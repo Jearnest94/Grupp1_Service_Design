@@ -6,12 +6,12 @@
     "description": "This API contains the top 1000 IMDB rated movies"
   },
   "servers": [{
-      "url": "/api/v.1.0/"
+      "url": "/api/v1.0/"
   }],
   "paths": {
     "/movie": {
       "get": {
-        "summary": "Get all movies from database",
+        "summary": "Get all movies from the database",
         "description": "Get the a list with selected information items of all the movies stored in the database",
         "produces": [
           "application/json"
