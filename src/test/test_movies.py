@@ -61,7 +61,7 @@ def test_post_and_delete_movie(client):
     response = client.post(url, json=obj_to_post)
     assert response.status_code == 201
 
-    # Retrieve movie_id from thr response
+    # Retrieve movie_id from the response
     data = response.json
     value = data["message"]
     numbers = []

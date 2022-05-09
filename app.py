@@ -3,8 +3,20 @@ Flask API main file
 """
 
 from flask import Flask
-
 from models import db
+
+from flask_swagger_ui import get_swaggerui_blueprint
+
+# Swagger specific items
+SWAGGER_URL = '/documentation'
+SWAGGER_JSON = '/static/swagger.json'
+SWAGGER_BLUEPRINT = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    SWAGGER_JSON,
+    config={
+        'app_name': 'IMDB Top 1000 films api'
+    }
+)
 
 
 def create_app():
@@ -23,6 +35,8 @@ def create_app():
 
     from blueprints.movie import bp_movie
     app.register_blueprint(bp_movie, url_prefix='/api/v.1.0')
+
+    app.register_blueprint(SWAGGER_BLUEPRINT, url_prefix=SWAGGER_URL)
 
     # from blueprints.user import bp_user
     # app.register_blueprint(bp_user)
