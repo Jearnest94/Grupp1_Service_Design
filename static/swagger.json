@@ -20,21 +20,21 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#components/schemas/booksResponseBody"
+              "$ref": "#components/schemas/movieResponseBody"
             }
           }
         }
       },
       "post": {
-        "summary": "Add a new book to the database",
-        "description": "Post data about a new book that will be stored in the database",
+        "summary": "Add a new movie to the database",
+        "description": "Post data about a new movie to be stored in the database",
         "requestBody": {
-          "description": "A book request object",
+          "description": "A movie request object",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                  "$ref": "#/components/schemas/bookRequestBody"
+                  "$ref": "#/components/schemas/movieRequestBody"
               }
             }
           }
@@ -46,22 +46,16 @@
           "201": {
             "description": "Created",
             "schema": {
-              "$ref": "#/components/schemas/bookObject"
-            }
-          },
-          "400": {
-            "description": "Request data error",
-            "schemas": {
-              "$ref": "#components/schemas/errorObject"
+              "$ref": "#/components/schemas/movieObject"
             }
           }
         }
       }
     },
-    "/books/{id}": {
+    "/movie/{id}": {
       "get": {
-        "summary": "Get a book with a given id",
-        "description": "This is the long description",
+        "summary": "Get a movie with a given id",
+        "description": "This returns a movie object with the given movie id",
         "parameters": [{
           "name": "id",
           "in": "path",
