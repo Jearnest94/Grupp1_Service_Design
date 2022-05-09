@@ -28,7 +28,7 @@ def login():
         from app import db
         user.latesttoken = token
         db.session.commit()
-        return jsonify({'token': token})
+        return jsonify({'token': token}), 200
 
     return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
 

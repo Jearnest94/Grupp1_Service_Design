@@ -1,3 +1,4 @@
+import os
 from functools import wraps
 
 import jwt
@@ -18,7 +19,7 @@ def token_required(f):
             return jsonify({'message': 'Token is missing'}), 401
 
         try:
-            data = jwt.decode(token, '123secret', algorithms=['HS256'])
+            data = jwt.decode(token, os.getenv("APP_SECRET"), algorithms=['HS256'])
             current_user = User.query.filter_by(public_id=data['id']).first()
         except:
             return jsonify({'message': 'Token is invalid!'}), 401
