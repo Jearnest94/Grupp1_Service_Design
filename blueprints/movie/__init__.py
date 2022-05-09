@@ -44,7 +44,7 @@ def create_movie():
                                f'with movie_id {new_movie.movie_id} added!'}), 201
 
 
-@bp_movie.get('/movie/<movie_id>') #Vad ska jag ha för värde här?
+@bp_movie.get('/movie/<movie_id>')
 def get_one_movie(movie_id):
 
     movie = Movie.query.filter_by(movie_id=movie_id).first()
@@ -96,6 +96,70 @@ def delete_movie(movie_id):
     db.session.commit()
     return jsonify({"message": f'The movie {movie.Series_Title} with movie_id '
                                f'{movie.movie_id} deleted!'}), 200
+
+
+
+@bp_movie.get('movie/rating/<float:rating>')
+def get_movies_by_Rating(rating):
+    movies = Movie.query.filter_by(IMDB_Rating=rating).all()
+
+    output = []
+    for movie in movies:
+        movie_data = {}
+        movie_data['movie_id'] = movie.movie_id
+        movie_data['Series_Title'] = movie.Series_Title
+        movie_data['Released_Year'] = movie.Released_Year
+        movie_data['Runtime'] = movie.Runtime
+        movie_data['Genre'] = movie.Genre
+        movie_data['IMDB_Rating'] = movie.IMDB_Rating
+        movie_data['Overview'] = movie.Overview
+        movie_data['Director'] = movie.Director
+        movie_data['Star1'] = movie.Star1
+
+        output.append(movie_data)
+    return jsonify({'movie': output}), 200
+
+
+@bp_movie.get('movie/year/<int:year>')
+def get_movies_by_Year(year):
+    movies = Movie.query.filter_by(Released_Year=year).all()
+
+    output = []
+    for movie in movies:
+        movie_data = {}
+        movie_data['movie_id'] = movie.movie_id
+        movie_data['Series_Title'] = movie.Series_Title
+        movie_data['Released_Year'] = movie.Released_Year
+        movie_data['Runtime'] = movie.Runtime
+        movie_data['Genre'] = movie.Genre
+        movie_data['IMDB_Rating'] = movie.IMDB_Rating
+        movie_data['Overview'] = movie.Overview
+        movie_data['Director'] = movie.Director
+        movie_data['Star1'] = movie.Star1
+
+        output.append(movie_data)
+    return jsonify({'movie': output}), 200
+
+
+@bp_movie.get('movie/director/<director>')
+def get_movies_by_Director(director):
+    movies = Movie.query.filter_by(Director=director).all()
+
+    output = []
+    for movie in movies:
+        movie_data = {}
+        movie_data['movie_id'] = movie.movie_id
+        movie_data['Series_Title'] = movie.Series_Title
+        movie_data['Released_Year'] = movie.Released_Year
+        movie_data['Runtime'] = movie.Runtime
+        movie_data['Genre'] = movie.Genre
+        movie_data['IMDB_Rating'] = movie.IMDB_Rating
+        movie_data['Overview'] = movie.Overview
+        movie_data['Director'] = movie.Director
+        movie_data['Star1'] = movie.Star1
+
+        output.append(movie_data)
+    return jsonify({'movie': output}), 200
 
 
 

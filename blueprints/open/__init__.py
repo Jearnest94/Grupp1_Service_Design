@@ -9,17 +9,6 @@ import datetime
 bp_open = Blueprint('bp_open', __name__)
 
 
-@bp_open.before_request
-def logger():
-    now = datetime.datetime.utcnow()
-    from sqlalchemy.sql.functions import current_user
-    new_log = Log(user=current_user.name, endpoint=request.endpoint, timestamp=now)
-    from app import db
-    db.session.add(new_log)
-    db.session.commit()
-    print(f'API accessed {request.endpoint} \t {now.strftime("%Y-%m-%d %H:%M:%S")}')
-
-
 @bp_open.get('/login')
 def login():
     auth = request.authorization
@@ -34,7 +23,7 @@ def login():
 
     if check_password_hash(user.password, auth.password):
         token = jwt.encode(
-            {'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=600)},
+            {'id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=600)},
             '123secret')
         from app import db
         user.latesttoken = token
@@ -42,6 +31,17 @@ def login():
         return jsonify({'token': token})
 
     return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
+
+
+@bp_open.before_request
+def logger():
+    now = datetime.datetime.utcnow()
+    from sqlalchemy.sql.functions import current_user
+    new_log = Log(user=current_user.name, endpoint=request.endpoint, timestamp=now)
+    from app import db
+    db.session.add(new_log)
+    db.session.commit()
+    print(f'API accessed {request.endpoint} \t {now.strftime("%Y-%m-%d %H:%M:%S")}')
 
 
 
