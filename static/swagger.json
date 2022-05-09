@@ -52,17 +52,17 @@
         }
       }
     },
-    "/movie/{id}": {
+    "/movie/{movieId}": {
       "get": {
         "summary": "Get a movie with a given id",
         "description": "This returns a movie object with the given movie id",
         "parameters": [{
-          "name": "id",
+          "name": "movieId",
           "in": "path",
           "required": true,
-          "description": "ID of the book that we want to match",
+          "description": "ID of the movie that we want to retrieve",
           "schema": {
-            "$ref": "#components/schemas/id"
+            "$ref": "#components/schemas/movieId"
           }
       }],
         "responses": {
@@ -71,7 +71,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/bookObject"
+                  "$ref": "#components/schemas/movieObject"
+                }
+              }
+            }
+          },
+           "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/errorObject"
                 }
               }
             }
@@ -79,15 +89,15 @@
         }
       },
       "put": {
-        "summary": "Change a book with a given id",
+        "summary": "Change a movie with a given id",
         "description": "This is the long description",
         "parameters": [{
-          "name": "id",
+          "name": "movieId",
           "in": "path",
           "required": true,
           "description": "ID of the book that we want to match",
           "schema": {
-            "$ref": "#components/schemas/id"
+            "$ref": "#components/schemas/movieId"
           }
       }],
         "responses": {
@@ -97,16 +107,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#components/schemas/bookObject"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Content-type must be application/json",
-            "content": {
-              "application/json":{
-                "schema": {
-                  "$ref": "#components/schemas/errorObject"
                 }
               }
             }
@@ -124,9 +124,41 @@
         }
       },
       "delete": {
+        "summary": "Delete a movie with a given id",
+        "description": "Retrieve a movie object by id and delete it",
+        "parameters": [{
+          "name": "movieId",
+          "in": "path",
+          "required": true,
+          "description": "ID of the movie we want to retieve",
+          "schema": {
+            "$ref": "#components/schemas/movieId"
+          }
+      }],
         "responses": {
-
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/movieObject"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json":{
+                "schema": {
+                  "$ref": "#components/schemas/errorObject"
+                }
+              }
+            }
+          }
         }
+      }
+    }
       }
     }
   },
@@ -141,13 +173,13 @@
          }
 
       },
-      "bookObject": {
+      "movieObject": {
         "type": "object",
-        "description": "A book objects",
+        "description": "A movie object",
         "properties": {
           "id": {
             "type": "integer",
-            "description": "The id of the book"
+            "description": "The id of the movie"
           },
           "title": {
             "type": "string",
@@ -163,14 +195,14 @@
           }
         }
       },
-      "booksResponseBody": {
+      "movieResponseBody": {
         "type": "array",
-        "description": "An array of bookObjects"
+        "description": "An array of movieObjects"
 
       },
-      "bookRequestBody": {
+      "movieRequestBody": {
         "type": "object",
-        "description": "A book object without an id",
+        "description": "A movie object without an id",
         "properties": {
           "title": {
             "type": "string",

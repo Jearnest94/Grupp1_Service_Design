@@ -65,7 +65,7 @@ def get_one_movie(movie_id):
     return jsonify({'movie': movie_data}), 200
 
 
-@bp_movie.put('/movie/<movie_id>') #Vad ska jag ha för värde här?
+@bp_movie.put('/movie/<movie_id>')
 def alter_movie_details(movie_id):
 
     movie = Movie.query.filter_by(movie_id=movie_id).first()
@@ -81,7 +81,7 @@ def alter_movie_details(movie_id):
 
     from app import db
     db.session.commit()
-    return jsonify({'message': f'The movie {movie.Series_Title} with movie_id {movie.movie_id} updated!'}), 200
+    return jsonify({'message': f'The movie {movie.Series_Title} with movie_id {movie.movie_id} updated!'}), 202
 
 
 @bp_movie.delete('/movie/<movie_id>')
