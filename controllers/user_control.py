@@ -19,7 +19,7 @@ def token_required(f):
 
         try:
             data = jwt.decode(token, '123secret', algorithms=['HS256'])
-            current_user = User.query.filter_by(public_id=data['public_id']).first()
+            current_user = User.query.filter_by(public_id=data['id']).first()
         except:
             return jsonify({'message': 'Token is invalid!'}), 401
 

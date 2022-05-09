@@ -23,7 +23,7 @@ def login():
 
     if check_password_hash(user.password, auth.password):
         token = jwt.encode(
-            {'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=600)},
+            {'id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=600)},
             '123secret')
         from app import db
         user.latesttoken = token

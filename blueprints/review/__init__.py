@@ -41,10 +41,10 @@ def get_one_review(current_user, review_id):
     return jsonify(review_data), 200
 
 
-@bp_review.get('/review/user/<public_id>')
+@bp_review.get('/review/user/<id>')
 @token_required
-def get_review_by_user_public_id(current_user, public_id):
-    user = User.query.filter_by(public_id=public_id).first()
+def get_review_by_user_id(current_user, id):
+    user = User.query.filter_by(id=id).first()
 
     if not user.reviews:
         return jsonify({'message': 'No reviews found'}), 404
@@ -61,7 +61,7 @@ def get_review_by_user_public_id(current_user, public_id):
         review_data['movie_id'] = review.movie_id
         output.append(review_data)
 
-    return jsonify({f'Reviews by user with public_id: {public_id}': output}), 200
+    return jsonify({f'Reviews by user with id: {id}': output}), 200
 
 
 @bp_review.get('review/movie/<movie_id>')

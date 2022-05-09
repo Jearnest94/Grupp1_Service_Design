@@ -24,7 +24,7 @@ def get_all_users(current_user):
     output = []
     for user in users:
         user_data = {}
-        user_data['public_id'] = user.public_id
+        user_data['id'] = user.id
         user_data['name'] = user.name
         user_data['password'] = user.password
         user_data['admin'] = user.admin
@@ -32,19 +32,19 @@ def get_all_users(current_user):
     return jsonify({'users': output}), 200
 
 
-@bp_user.get('/user/<public_id>')
+@bp_user.get('/user/<id>')
 @token_required
-def get_one_user(current_user, public_id):
+def get_one_user(current_user, id):
     if not current_user.admin:
         return jsonify({'message': 'Cannot perform that function! Check your privilegies.'}), 403
 
-    user = User.query.filter_by(public_id=public_id).first()
+    user = User.query.filter_by(id=id).first()
 
     if not user:
         return jsonify({'message': 'No user found!'}), 204
 
     user_data = {}
-    user_data['public_id'] = user.public_id
+    user_data['id'] = user.id
     user_data['name'] = user.name
     user_data['password'] = user.password
     user_data['admin'] = user.admin
@@ -68,13 +68,13 @@ def create_user(current_user):
     return jsonify({'message': f'User with username {username} created!'}), 200
 
 
-@bp_user.put('/user/<public_id>')
+@bp_user.put('/user/<id>')
 @token_required
-def promote_user(current_user, public_id):
+def promote_user(current_user, id):
     if not current_user.admin:
         return jsonify({'message': 'Cannot perform that function! Check your privilegies.'}), 403
 
-    user = User.query.filter_by(public_id=public_id).first()
+    user = User.query.filter_by(id=id).first()
 
     if not user:
         return jsonify({'message': 'No user found!'}), 404
@@ -86,13 +86,13 @@ def promote_user(current_user, public_id):
     return jsonify({'message': f'The user has been promoted to admin.'}), 200
 
 
-@bp_user.delete('/user/<public_id>')
+@bp_user.delete('/user/<id>')
 @token_required
-def delete_user(current_user, public_id):
+def delete_user(current_user, id):
     if not current_user.admin:
         return jsonify({'message': 'Cannot perform that function! Check your privilegies.'}), 403
 
-    user = User.query.filter_by(public_id=public_id).first()
+    user = User.query.filter_by(id=id).first()
     if not user:
         return jsonify({'message': 'No user found!'}), 204
 

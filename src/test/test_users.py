@@ -27,7 +27,7 @@ def test_get_user(client):
     response = client.get('/api/v.1.0/user')
     data = json.loads(response.text)
     test = data['user']
-    first_user = next((item for item in test if item['public_id'] == 6000), None)
+    first_user = next((item for item in test if item['id'] == 6000), None)
     assert first_user["name"] == "admin"
 
 
@@ -36,7 +36,7 @@ def test_post_and_delete_user(client):
 
     obj_to_post = {
         "id": 3,
-        "public_id": 3000,
+        "id": 3000,
         "name": 'fisk',
         "password": "321",
         "admin": "true",
@@ -53,7 +53,7 @@ def test_post_and_delete_user(client):
     # for word in value.split():
     #     if word.isdigit():
     #         numbers.append(int(word))
-    # public_id = numbers[0000]
+    # id = numbers[0000]
 
     # Update url and check that new movie is in the db
     url = f'http://localhost:5000/api/v.1.0/user/3000'
@@ -61,7 +61,7 @@ def test_post_and_delete_user(client):
     response2 = client.get(url)
     data = json.loads(response2.text)
     User_data = data['user']
-    assert User_data["public_id"] == 3000
+    assert User_data["id"] == 3000
     assert User_data["name"] == "fisk"
 
     # Delete
