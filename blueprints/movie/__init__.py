@@ -44,7 +44,7 @@ def create_movie():
                                f'with movie_id {new_movie.movie_id} added!'}), 201
 
 
-@bp_movie.get('/movie/<movie_id>') #Vad ska jag ha för värde här?
+@bp_movie.get('/movie/<movie_id>')
 def get_one_movie(movie_id):
 
     movie = Movie.query.filter_by(movie_id=movie_id).first()
@@ -65,7 +65,7 @@ def get_one_movie(movie_id):
     return jsonify({'movie': movie_data}), 200
 
 
-@bp_movie.put('/movie/<movie_id>') #Vad ska jag ha för värde här?
+@bp_movie.put('/movie/<movie_id>')
 def alter_movie_details(movie_id):
 
     movie = Movie.query.filter_by(movie_id=movie_id).first()
