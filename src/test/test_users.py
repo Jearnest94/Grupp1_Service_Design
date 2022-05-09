@@ -1,34 +1,74 @@
-# from flask import Flask
-# import json
-#
-# from blueprints.filter import get, configure_routes
+import json
+from models import Movie, User
 
-
-# def test_base_route():
-#     app = Flask(__name__)
-#     configure_routes(app)
-#     client = app.test_client()
-#     url = '/hello'
-#
-#     response = client.get(url)
-#     # assert response.get_data() == b'Hello, World!'
-#     # assert response.get_data() ==
-#     assert response.status_code == 200
+import pytest
+import requests
 
 from .fixture import client
 
 
-def test_Rating_status_code(client):
-    response = client.get('/api/v1.0/Rating/8.6')
+def test_user_models(client):
+    user = User(public_id=6000, name='admin')
+    assert user.name == 'admin'
+
+
+def test_user_status_code(client):
+    response = client.get('/api/v.1.0/user')
     assert response.status_code == 200
-    print("Test")
+    assert b'test' in response.datadef
 
 
-def test_movie_status_code(client):
-    response = client.get('/api/v1.0/movie')
-    assert response.status_code == 200
-
-# def test_user_status_code(client):
-#
-#     response = client.get('/user')
+# def test_get_one_user(client):
+#     response = client.get('/api/v.1.0/user/6000')
 #     assert response.status_code == 200
+
+
+def test_get_user(client):
+    response = client.get('/api/v.1.0/user')
+    data = json.loads(response.text)
+    test = data['user']
+    first_user = next((item for item in test if item['public_id'] == 6000), None)
+    assert first_user["name"] == "admin"
+
+
+def test_post_and_delete_user(client):
+    url = 'http://localhost:5000/api/v.1.0/user'
+
+    obj_to_post = {
+        "id": 3,
+        "public_id": 3000,
+        "name": 'fisk',
+        "password": "321",
+        "admin": "true",
+    }
+
+    # Check that new movie object has been created
+    response = client.post(url, json=obj_to_post)
+    assert response.status_code == 201
+
+    # Retrieve movie_id from the response
+    # data = response.json
+    # value = data["message"]
+    # numbers = []
+    # for word in value.split():
+    #     if word.isdigit():
+    #         numbers.append(int(word))
+    # public_id = numbers[0000]
+
+    # Update url and check that new movie is in the db
+    url = f'http://localhost:5000/api/v.1.0/user/3000'
+
+    response2 = client.get(url)
+    data = json.loads(response2.text)
+    User_data = data['user']
+    assert User_data["public_id"] == 3000
+    assert User_data["name"] == "fisk"
+
+    # Delete
+    response3 = client.delete(url)
+    assert response3.status_code == 200
+
+    response4 = client.get(url)
+    assert response4.status_code == 404
+
+

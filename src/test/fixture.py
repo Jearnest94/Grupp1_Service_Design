@@ -55,3 +55,4 @@ def auth(client):
     :return:
     """
     return AuthActions(client)
+

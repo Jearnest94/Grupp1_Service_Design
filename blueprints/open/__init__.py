@@ -170,5 +170,5 @@ def delete_review(current_user, review_id):
     db.session.delete(review)
     db.session.commit()
 
-    return jsonify({'message': f'Review with id {review_id} deleted'})
 
+    return jsonify({'message': f'Review with id {review_id} deleted'})
