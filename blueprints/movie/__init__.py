@@ -81,7 +81,7 @@ def alter_movie_details(movie_id):
 
     from app import db
     db.session.commit()
-    return jsonify({'message': f'The movie {movie.Series_Title} with movie_id {movie.movie_id} updated!'}), 200
+    return jsonify({'message': f'The movie {movie.Series_Title} with movie_id {movie.movie_id} updated!'}), 202
 
 
 @bp_movie.delete('/movie/<movie_id>')
