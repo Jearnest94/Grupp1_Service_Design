@@ -25,20 +25,34 @@ def client():
 # i test för att logga in som testanvändaren
 
 class AuthActions(object):
+    """
+    Authentication
+    """
     def __init__(self, client):
+        """
+        Returns client
+        :param client: Client
+        """
         self._client = client
 
-    def login(self, username='test', password='123'):
+    def login(self, username='admin', password='123'):
+        """
+        Login func
+        :param username: admin
+        :param password: 123
+        :return: data
+        """
         return self._client.post(
-            '/api/v.1.0/login',
+            '/api/v1.0/login',
             data={'username': username, 'password': password})
-
-    # Har vi en sådan endpoint?
-    def logout(self):
-        return self._client.get('/api/v.1.0/logout')
 
 
 @pytest.fixture
 def auth(client):
+    """
 
+    :param client:
+    :return:
+    """
     return AuthActions(client)
+

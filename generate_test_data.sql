@@ -18,3 +18,4 @@ VALUES ('3', 'This was not a movie at all', '1', '3', '2');
 
 INSERT INTO review (id, text, rating, user_id, movie_id)
 VALUES ('4', 'Super nice movie', '10', '1', '2');
+

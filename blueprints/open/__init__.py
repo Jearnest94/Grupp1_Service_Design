@@ -1,7 +1,7 @@
 from flask import Blueprint
 from sqlalchemy import null
 
-
+from controllers.user_control import token_required
 from models import User, Review, Log, Movie
 from flask import Flask, request, jsonify, make_response
 import uuid
@@ -47,27 +47,6 @@ def login():
 
     return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
 
-
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = None
-
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
-
-        if not token:
-            return jsonify({'message': 'Token is missing'}), 401
-
-        try:
-            data = jwt.decode(token, '123secret', algorithms=['HS256'])
-            current_user = User.query.filter_by(public_id=data['public_id']).first()
-        except:
-            return jsonify({'message': 'Token is invalid!'}), 401
-
-        return f(current_user, *args, **kwargs)
-
-    return decorated
 
 
 @bp_open.get('/user')
@@ -159,89 +138,6 @@ def delete_user(current_user, public_id):
 
     return jsonify({'message': f'User has been deleted!'})
 
-
-@bp_open.get('/review')
-@token_required
-def get_all_reviews(current_user):
-    reviews = Review.query.all()
-
-    output = []
-    for review in reviews:
-        review_data = {}
-        review_data['id'] = review.id
-        review_data['text'] = review.text
-        review_data['rating'] = review.rating
-        review_data['movie_id'] = review.movie_id
-        output.append(review_data)
-
-    return jsonify({'reviews': output})
-
-
-@bp_open.get('/review/<review_id>')
-@token_required
-def get_one_review(current_user, review_id):
-    review = Review.query.filter_by(id=review_id).first()
-
-    if not review:
-        return jsonify({'message': 'No review found'})
-
-    review_data = {}
-    review_data['id'] = review.id
-    review_data['text'] = review.text
-    review_data['rating'] = review.rating
-    review_data['movie_id'] = review.movie_id
-
-    return jsonify(review_data)
-
-
-@bp_open.get('/review/user/<public_id>')
-@token_required
-def get_review_by_user_public_id(current_user, public_id):
-    user = User.query.filter_by(public_id=public_id).first()
-
-    if not user.reviews:
-        return jsonify({'message': 'No reviews found'})
-
-    if not user:
-        return jsonify({'message': 'User not found'})
-
-    output = []
-    for review in user.reviews:
-        review_data = {}
-        review_data['id'] = review.id
-        review_data['text'] = review.text
-        review_data['rating'] = review.rating
-        review_data['movie_id'] = review.movie_id
-        output.append(review_data)
-
-    return jsonify({f'Reviews by user with public_id: {public_id}': output})
-
-
-@bp_open.get('review/movie/<movie_id>')
-@token_required
-def get_reviews_by_movie_id(current_user, movie_id):
-    movie = Movie.query.filter_by(movie_id=movie_id).first()
-    print(movie)
-    output = []
-
-    for review in movie.reviews:
-        review_data = {}
-        review_data['id'] = review.id
-        review_data['text'] = review.text
-        review_data['rating'] = review.rating
-        review_data['movie_id'] = review.movie_id
-        output.append(review_data)
-    return jsonify({f'Reviews for movie with id: {movie_id}': output})
-
-
-@bp_open.post('/review')
-@token_required
-def create_review(current_user):
-    data = request.get_json()
-    new_review = Review(text=data['text'], rating=data['rating'], movie_id=data['movie_id'], user_id=current_user.id)
-    from app import db
-    db.session.add(new_review)
-    db.session.commit()
 
     return jsonify({'message': 'Review added!'})
 
