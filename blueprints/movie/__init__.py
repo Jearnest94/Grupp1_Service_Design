@@ -39,6 +39,7 @@ def get_all_movies():
 @bp_movie.get('/movie/<movie_id>')
 def get_one_movie(movie_id):
     movie = Movie.query.filter_by(movie_id=movie_id).first()
+    
     if not movie:
         return jsonify({'message': f'Movie with movie_id {movie_id} not found!',
                         'All movies': f'/api/v1.0/movie'}), 404
