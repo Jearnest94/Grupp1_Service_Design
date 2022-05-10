@@ -1,8 +1,11 @@
 """
 CRUD for endpoint movie
 """
+import datetime
 
 from flask import Blueprint
+
+from models import Movie, User, Log
 
 from flask import request, jsonify
 from models import Movie
@@ -200,3 +203,16 @@ def get_movies_by_director(director):
 
         output.append(movie_data)
     return jsonify({'movie': output}), 200
+
+
+@bp_movie.before_request
+def logger():
+    token = request.headers.get('x-access-token')
+    user = User.query.filter_by(latesttoken=token).first()
+    now = datetime.datetime.utcnow()
+    new_log = Log(user=user.name, endpoint=request.endpoint, timestamp=now)
+    from app import db
+    db.session.add(new_log)
+    db.session.commit()
+    print(f'API Accessed - User: {user.name} - Endpoint: {request.endpoint} \t {now.strftime("%Y-%m-%d %H:%M:%S")}')
+

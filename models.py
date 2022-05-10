@@ -18,7 +18,7 @@ class User(db.Model):
     name = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
     admin = db.Column(db.Boolean)
-    reviews = db.relationship('Review', backref='user')
+    reviews = db.relationship('Review', back_populates='user')
     latesttoken = db.Column(db.String(150))
 
 
@@ -28,6 +28,8 @@ class Review(db.Model):
     rating = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     movie_id = db.Column(db.Integer, db.ForeignKey('movie.movie_id'))
+    movie = db.relationship('Movie', back_populates='reviews')
+    user = db.relationship('User', back_populates='reviews')
 
 
 class Movie(db.Model):
@@ -48,7 +50,7 @@ class Movie(db.Model):
     Star4 = db.Column(db.Text)
     No_of_Votes = db.Column(db.Integer)
     Gross = db.Column(db.Text)
-    reviews = db.relationship('Review', backref='movie')
+    reviews = db.relationship('Review', back_populates='movie')
 
     def update(self, other_movie):
         self.Series_Title = other_movie.Series_Title

@@ -1,7 +1,11 @@
+import datetime
+from collections import OrderedDict
+
 from flask import Blueprint
 
+from blueprints.open import logger
 from controllers.user_control import token_required
-from models import Review, Movie, User
+from models import Review, Movie, User, Log
 from flask import request, jsonify
 
 bp_review = Blueprint('bp_review', __name__)
@@ -14,11 +18,15 @@ def get_all_reviews(current_user):
 
     output = []
     for review in reviews:
+        movie = Movie.query.filter_by(movie_id=review.movie_id).first()
         review_data = {}
         review_data['id'] = review.id
         review_data['text'] = review.text
         review_data['rating'] = review.rating
-        review_data['movie_id'] = review.movie_id
+        review_data['movie'] = movie.Series_Title
+        review_data['links'] = {
+            'reviewer': f'/api/v1.0/user/{review.user_id}'
+        }
         output.append(review_data)
 
     return jsonify({'reviews': output}), 200
@@ -122,3 +130,14 @@ def delete_review(current_user, review_id):
 
     return jsonify({'message': f'Review with id {review_id} deleted'}), 200
 
+
+@bp_review.before_request
+def logger():
+    token = request.headers.get('x-access-token')
+    user = User.query.filter_by(latesttoken=token).first()
+    now = datetime.datetime.utcnow()
+    new_log = Log(user=user.name, endpoint=request.endpoint, timestamp=now)
+    from app import db
+    db.session.add(new_log)
+    db.session.commit()
+    print(f'API Accessed - User: {user.name} - Endpoint: {request.endpoint} \t {now.strftime("%Y-%m-%d %H:%M:%S")}')
