@@ -41,7 +41,7 @@ def get_one_user(current_user, id):
     user = User.query.filter_by(id=id).first()
 
     if not user:
-        return jsonify({'message': 'No user found!'}), 204
+        return jsonify({'message': 'No user found!'}), 404
 
     user_data = {}
     user_data['id'] = user.id
@@ -94,7 +94,7 @@ def delete_user(current_user, id):
 
     user = User.query.filter_by(id=id).first()
     if not user:
-        return jsonify({'message': 'No user found!'}), 204
+        return jsonify({'message': 'No user found!'}), 404
 
     from app import db
     db.session.delete(user)

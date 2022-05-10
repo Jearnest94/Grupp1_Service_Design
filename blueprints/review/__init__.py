@@ -114,7 +114,7 @@ def delete_review(current_user, review_id):
     review = Review.query.filter_by(id=review_id, user_id=current_user.id).first()
 
     if not review:
-        return jsonify({'message': 'Nothing here to delete.'}), 204 # Tror att denna ska vara 404
+        return jsonify({'message': 'Nothing here to delete.'}), 404
 
     from app import db
     db.session.delete(review)
