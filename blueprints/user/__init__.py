@@ -18,7 +18,7 @@ bp_user = Blueprint('bp_user', __name__)
 @token_required
 def get_all_users(current_user):
     if not current_user.admin:
-        return jsonify({'message': 'Cannot perform that function! Check your privilegies.'}), 403
+        return jsonify({'message': 'Cannot perform that function! Check your privileges.'}), 403
 
     users = User.query.all()
 
@@ -37,12 +37,12 @@ def get_all_users(current_user):
 @token_required
 def get_one_user(current_user, id):
     if not current_user.admin:
-        return jsonify({'message': 'Cannot perform that function! Check your privilegies.'}), 403
+        return jsonify({'message': 'Cannot perform that function! Check your privileges.'}), 403
 
     user = User.query.filter_by(id=id).first()
 
     if not user:
-        return jsonify({'message': 'No user found!'}), 204
+        return jsonify({'message': 'No user found!'}), 404
 
     user_data = {}
     user_data['id'] = user.id
@@ -57,7 +57,7 @@ def get_one_user(current_user, id):
 @token_required
 def create_user(current_user):
     if not current_user.admin:
-        return jsonify({'message': 'Cannot perform that function! Check your privilegies.'}), 403
+        return jsonify({'message': 'Cannot perform that function! Check your privileges.'}), 403
 
     data = request.get_json()
     hashed_password = generate_password_hash(data['password'], method='sha256')
@@ -66,14 +66,14 @@ def create_user(current_user):
     from app import db
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({'message': f'User with username {username} created!'}), 200
+    return jsonify({'message': f'User with username {username} created!'}), 201
 
 
 @bp_user.put('/user/<id>')
 @token_required
 def promote_user(current_user, id):
     if not current_user.admin:
-        return jsonify({'message': 'Cannot perform that function! Check your privilegies.'}), 403
+        return jsonify({'message': 'Cannot perform that function! Check your privileges.'}), 403
 
     user = User.query.filter_by(id=id).first()
 
@@ -95,7 +95,7 @@ def delete_user(current_user, id):
 
     user = User.query.filter_by(id=id).first()
     if not user:
-        return jsonify({'message': 'No user found!'}), 204
+        return jsonify({'message': 'No user found!'}), 404
 
     from app import db
     db.session.delete(user)
