@@ -24,8 +24,9 @@ class User(db.Model):
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.String(50))
+    text = db.Column(db.String(300))
     rating = db.Column(db.Integer)
+    title = db.Column(db.String(50))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     movie_id = db.Column(db.Integer, db.ForeignKey('movie.movie_id'))
     movie = db.relationship('Movie', back_populates='reviews')
