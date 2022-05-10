@@ -17,11 +17,13 @@ def get_all_reviews(current_user):
     output = []
     for review in reviews:
         movie = Movie.query.filter_by(movie_id=review.movie_id).first()
+        user = User.query.filter_by(id=review.user_id).first()
         review_data = {}
         review_data['id'] = review.id
         review_data['text'] = review.text
         review_data['rating'] = review.rating
         review_data['movie'] = movie.Series_Title
+        review_data['author'] = user.name
         review_data['links'] = {
             'This review': f'/api/v1.0/review/{review.id}',
             'All reviews by this user': f'/api/v1.0/review/user/{review.user_id}',
@@ -38,20 +40,24 @@ def get_one_review(current_user, review_id):
     review = Review.query.filter_by(id=review_id).first()
 
     if not review:
-        return jsonify({'message': 'No review found'}), 404
+        return jsonify({'message': 'No review found', 'All movies': f'/api/v1.0/movie',
+                        'All reviews': f'/api/v1.0/review'}), 404
 
     movie = Movie.query.filter_by(movie_id=review.movie_id).first()
+    user = User.query.filter_by(id=review.user_id).first()
     review_data = {}
     review_data['id'] = review.id
     review_data['text'] = review.text
     review_data['rating'] = review.rating
     review_data['movie'] = movie.Series_Title
+    review_data['author'] = user.name
     review_data['links'] = {
         'This user:': f'/api/v1.0/user/{review.user_id}',
+        'This movie': f'/api/v1.0/movie/{movie.movie_id}',
         'All reviews': f'/api/v1.0/review',
         'All reviews by this user': f'/api/v1.0/review/user/{review.user_id}',
         'All reviews for this movie': f'/api/v1.0/review/movie/{review.movie_id}',
-        'Edit rating for this movie(PUT)': f'/api/v1.0/movie/setrating/{review.movie}'
+        'Edit rating(PUT)': f'/api/v1.0/movie/setrating/{review.movie}'
     }
 
     return jsonify(review_data), 200
@@ -94,13 +100,16 @@ def get_review_by_movie_id(current_user, movie_id):
     output = []
 
     for review in movie.reviews:
+        user = User.query.filter_by(id=review.user_id).first()
         review_data = {}
         review_data['id'] = review.id
         review_data['text'] = review.text
         review_data['rating'] = review.rating
         review_data['movie'] = movie.Series_Title
+        review_data['author'] = user.name
         review_data['links'] = {
             'This review': f'/api/v1.0/review/{review.id}',
+            'This movie': f'/api/v1.0/movie/{movie.movie_id}',
             'All reviews': f'/api/v1.0/review',
             'All reviews by this user': f'/api/v1.0/review/user/{review.user_id}'
         }

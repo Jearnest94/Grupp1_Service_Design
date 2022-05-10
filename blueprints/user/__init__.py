@@ -31,7 +31,7 @@ def get_all_users(current_user):
         user_data['admin'] = user.admin
         user_data['links'] = {
             'This user:': f'/api/v1.0/user/{user.id}',
-            'Reviews by this user': f'/api/v1.0/review/user/{user.id}'
+            'Reviews by user': f'/api/v1.0/review/user/{user.id}'
         }
         output.append(user_data)
     return jsonify({'users': output}), 200
@@ -46,7 +46,7 @@ def get_one_user(current_user, id):
     user = User.query.filter_by(id=id).first()
 
     if not user:
-        return jsonify({'message': 'No user found!'}), 204
+        return jsonify({'message': 'No user found!'}), 404
 
     user_data = {}
     user_data['id'] = user.id
@@ -55,8 +55,9 @@ def get_one_user(current_user, id):
     user_data['admin'] = user.admin
     user_data['links'] = {
         'All users:': f'/api/v1.0/user',
-        'Reviews by this user': f'/api/v1.0/review/user/{user.id}',
-        'Promote user(PUT)': f'/api/v1.0/user/{user.id}'
+        'Reviews by user': f'/api/v1.0/review/user/{user.id}',
+        'Promote user(PUT)': f'/api/v1.0/user/{user.id}',
+        'Delete user(DEL)': f'/api/v1.0/user({user.id}'
     }
 
     return jsonify({'user': user_data}), 200
@@ -77,7 +78,7 @@ def create_user(current_user):
     db.session.commit()
     last_added_user = User.query.order_by(User.id.desc()).first()
     return jsonify({'message': f'User with username {username} created!', 'All users:': f'/api/v1.0/user', 'New user': f'/api/v1.0/user/{last_added_user.id}',
-                    'Promote new user': f'/api/v1.0/user/{last_added_user.id}'}), 200
+                    'Promote user(PUT)': f'/api/v1.0/user/{last_added_user.id}', 'Delete user(DEL)': f'api/v1.0/user({last_added_user.id}'}), 200
 
 
 @bp_user.put('/user/<id>')
@@ -89,13 +90,13 @@ def promote_user(current_user, id):
     user = User.query.filter_by(id=id).first()
 
     if not user:
-        return jsonify({'message': 'No user found!'}), 404
+        return jsonify({'message': 'No user found!', 'All users': f'/api/v1.0/user'}), 404
 
     user.admin = True
     from app import db
     db.session.commit()
 
-    return jsonify({'message': f'The user has been promoted to admin.', 'All users:': f'/api/v1.0/user', 'Promoted user': f'/api/v1.0/user/{user.id}'}), 200
+    return jsonify({'message': f'The user with username {user.name} has been promoted to admin.', 'All users:': f'/api/v1.0/user', 'This user': f'/api/v1.0/user/{user.id}'}), 200
 
 
 @bp_user.delete('/user/<id>')
@@ -106,7 +107,7 @@ def delete_user(current_user, id):
 
     user = User.query.filter_by(id=id).first()
     if not user:
-        return jsonify({'message': 'No user found!'}), 204
+        return jsonify({'message': 'No user found!', 'All users': f'/api/v1.0/user'}), 404
 
     from app import db
     db.session.delete(user)
