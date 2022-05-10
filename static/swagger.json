@@ -5,9 +5,11 @@
     "version": "1.0",
     "description": "This API contains the top 1000 IMDB rated movies"
   },
-  "servers": [{
+  "servers": [
+    {
       "url": "/api/v1.0/"
-  }],
+    }
+  ],
   "paths": {
     "/movie": {
       "get": {
@@ -250,7 +252,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#components/schemas/reviewResponseBody"
+              "$ref": "#components/schemas/review/reviewResponseBody"
             }
           }
         }
@@ -265,7 +267,7 @@
           "201": {
             "description": "Created",
             "schema": {
-              "$ref": "#components/schemas/reviewRequestBody"
+              "$ref": "#components/schemas/review/reviewRequestBody"
             }
           }
         }
@@ -282,13 +284,13 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#components/schemas/movieResponseBody"
+              "$ref": "#components/schemas/review/reviewResponseBody"
             }
           },
           "404": {
             "description": "Not Found",
             "schema": {
-              "$ref": "#components/schemas/errorObject"
+              "$ref": "#components/schemas/review/errorObject"
             }
           }
         }
@@ -303,13 +305,13 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#components/schemas/reviewObject"
+              "$ref": "#components/schemas/review/reviewObject"
             }
           },
           "202": {
             "description": "No content",
             "schema": {
-              "$ref": "#components/schemas/reviewResponseBody"
+              "$ref": "#components/schemas/review/reviewResponseBody"
             }
           }
         }
@@ -326,13 +328,13 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#components/schemas/reviewResponseBody"
+              "$ref": "#components/schemas/review/reviewResponseBody"
             }
           },
           "404": {
             "description": "Not Found",
             "schema": {
-              "$ref": "#components/schemas/errorObject"
+              "$ref": "#components/schemas/review/errorObject"
             }
           }
         }
@@ -349,7 +351,7 @@
             "required": true,
             "description": "ID of the review that we want to match",
             "schema": {
-              "$ref": "#components/schemas/id"
+              "$ref": "#components/schemas/review/id"
             }
           }
         ],
@@ -359,7 +361,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/reviewObject"
+                  "$ref": "#components/schemas/review/reviewObject"
                 }
               }
             }
@@ -369,188 +371,392 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/errorObject"
+                  "$ref": "#components/schemas/review/errorObject"
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "summary": "Get all users",
+        "description": "Get a list of all the users stored in the database",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#components/schemas/user/userResponseBody"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#components/schemas/user/errorObject"
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create user",
+        "description": "Create a new user and post to the database",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#components/schemas/user/userRequestBody"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#components/schemas/user/errorObject"
+            }
+          }
+        }
+      }
+    },
+    "/user/{id}": {
+      "get": {
+        "summary": "Get a user by id",
+        "description": "Get a single user from the database with the given id",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#components/schemas/user/userResponseBody"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#components/schemas/user/errorObject"
+            }
+          },
+          "204": {
+            "description": "No content",
+            "schema": {
+              "$ref": "#components/schemas/user/userResponseBody"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Alter user",
+        "description": "Alter the details of a single user by id",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#components/schemas/user/userResponseBody"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#components/schemas/user/errorObject"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#components/schemas/user/errorObject"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete user from database",
+        "description": "Delete a user with the given id from the database",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#components/schemas/user/userObject"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#components/schemas/user/errorObject"
             }
           }
         }
       }
     }
   },
-
-
   "components": {
     "schemas": {
       "movie": {
+        "id": {
          "properties":{
            "id": {
              "type": "string",
              "description": "Id of a given movie"
-           },
-            "movieObject": {
-              "type": "object",
-              "description": "A movie object",
-              "properties": {
-                "id": {
-                  "type": "integer",
-                  "description": "The id of the movie"
-                },
-                "Series_Title": {
-                  "type": "text",
-                  "description": "The title of the movie"
-                },
-                "Released_Year": {
-                  "type": "text",
-                  "description": "The release year of the movie"
-                },
-                "Runtime": {
-                  "type": "text",
-                  "description": "Length of the movie in minutes"
-                },
-                "Genre": {
-                  "type": "text",
-                  "description": "Genre of the movie"
-                },
-                "IMDB_Rating": {
-                  "type": "real",
-                  "description": "Rating of the movie"
-                  },
-                "Overview": {
-                  "type": "text",
-                  "description": "Description of the story"
-                  },
-                "Director": {
-                  "type": "text",
-                  "description": "Name of the movie director"
-                  },
-                "Star1": {
-                  "type": "text",
-                  "description": "Name of the lead actor"
-                }
-              }
+           }
+         }
+        },
+        "movieObject": {
+          "type": "object",
+          "description": "A movie object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "The id of the movie"
             },
-            "movieResponseBody": {
-              "type": "array",
-              "description": "An array of movieObjects"
-
+            "Series_Title": {
+              "type": "text",
+              "description": "The title of the movie"
             },
-            "movieRequestBody": {
-              "type": "object",
-              "description": "A movie object without an id",
-              "properties": {
-                "Series_Title": {
-                  "type": "text",
-                  "description": "The title of the movie"
-                },
-                "Released_Year": {
-                  "type": "text",
-                  "description": "The release year of the movie"
-                },
-                "Runtime": {
-                  "type": "text",
-                  "description": "Length of the movie in minutes"
-                },
-                "Genre": {
-                  "type": "text",
-                  "description": "Genre of the movie"
-                },
-                "IMDB_Rating": {
-                  "type": "real",
-                  "description": "Rating of the movie"
-                  },
-                "Overview": {
-                  "type": "text",
-                  "description": "Description of the story"
-                  },
-                "Director": {
-                  "type": "text",
-                  "description": "Name of the movie director"
-                  },
-                "Star1": {
-                  "type": "text",
-                  "description": "Name of the lead actor"
-                }
-              }
+            "Released_Year": {
+              "type": "text",
+              "description": "The release year of the movie"
             },
-            "errorObject": {
-              "type": "object",
-              "description": "An object describing an error",
-              "properties": {
-                "error": {
-                  "type": "string",
-                  "description": "The reason for the described"
-                }
-              }
+            "Runtime": {
+              "type": "text",
+              "description": "Length of the movie in minutes"
+            },
+            "Genre": {
+              "type": "text",
+              "description": "Genre of the movie"
+            },
+            "IMDB_Rating": {
+              "type": "real",
+              "description": "Rating of the movie"
+            },
+            "Overview": {
+              "type": "text",
+              "description": "Description of the story"
+            },
+            "Director": {
+              "type": "text",
+              "description": "Name of the movie director"
+            },
+            "Star1": {
+              "type": "text",
+              "description": "Name of the lead actor"
             }
           }
         },
+        "movieResponseBody": {
+          "type": "array",
+          "description": "An array of movieObjects"
+        },
+        "movieRequestBody": {
+          "type": "object",
+          "description": "A movie object without an id",
+          "properties": {
+            "Series_Title": {
+              "type": "text",
+              "description": "The title of the movie"
+            },
+            "Released_Year": {
+              "type": "text",
+              "description": "The release year of the movie"
+            },
+            "Runtime": {
+              "type": "text",
+              "description": "Length of the movie in minutes"
+            },
+            "Genre": {
+              "type": "text",
+              "description": "Genre of the movie"
+            },
+            "IMDB_Rating": {
+              "type": "real",
+              "description": "Rating of the movie"
+            },
+            "Overview": {
+              "type": "text",
+              "description": "Description of the story"
+            },
+            "Director": {
+              "type": "text",
+              "description": "Name of the movie director"
+            },
+            "Star1": {
+              "type": "text",
+              "description": "Name of the lead actor"
+            }
+          }
+        },
+        "errorObject": {
+          "type": "object",
+          "description": "An object describing an error",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "The reason for the described"
+            }
+          }
+        }
+      },
       "login": {
         "properties": {
           "token": {
             "type": "string",
             "description": "Token for login"
+          },
+          "errorObject": {
+            "type": "object",
+            "description": "An object describing an error",
+            "properties": {
+              "error": {
+                "type": "string",
+                "description": "The reason for the described"
+              }
+            }
           }
         }
       },
       "review": {
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Id of a given review"
-          },
-          "reviewObject": {
-            "type": "object",
-            "description": "A review object",
-            "properties": {
-              "id": {
-                "type": "integer",
-                "description": "The id of the review"
-              },
-              "text": {
-                "type": "string",
-                "description": "The body of the review"
-              },
-              "rating": {
-                "type": "integer",
-                "description": "The user rating of the movie"
-              },
-              "movie_id": {
-                "type": "integer",
-                "description": "The id of the movie"
-              }
+        "id": {
+         "properties":{
+           "id": {
+             "type": "string",
+             "description": "Id of a given movie"
+           }
+         }
+        },
+        "reviewObject": {
+          "type": "object",
+          "description": "A review object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "The id of the review"
+            },
+            "text": {
+              "type": "string",
+              "description": "The body of the review"
+            },
+            "rating": {
+              "type": "integer",
+              "description": "The user rating of the movie"
+            },
+            "movie_id": {
+              "type": "integer",
+              "description": "The id of the movie"
             }
-          },
-          "reviewResponseBody": {
-            "type": "array",
-            "description": "An array of reviewObjects"
-          },
-          "reviewRequestBody": {
-            "type": "object",
-            "description": "A review object without an id",
-            "properties": {
-              "text": {
-                "type": "string",
-                "description": "The body of the review"
-              },
-              "rating": {
-                "type": "integer",
-                "description": "The user rating of the movie"
-              },
-              "movie_id": {
-                "type": "integer",
-                "description": "The id of the movie"
-              }
+          }
+        },
+        "reviewResponseBody": {
+          "type": "array",
+          "description": "An array of reviewObjects"
+        },
+        "reviewRequestBody": {
+          "type": "object",
+          "description": "A review object without an id",
+          "properties": {
+            "text": {
+              "type": "string",
+              "description": "The body of the review"
+            },
+            "rating": {
+              "type": "integer",
+              "description": "The user rating of the movie"
+            },
+            "movie_id": {
+              "type": "integer",
+              "description": "The id of the movie"
+            }
+          }
+        },
+        "errorObject": {
+          "type": "object",
+          "description": "An object describing an error",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "The reason for the described"
             }
           }
         }
       },
       "user": {
-
-
+        "id": {
+         "properties":{
+           "id": {
+             "type": "string",
+             "description": "Id of a given user"
+           }
+         }
+        },
+        "userObject": {
+          "type": "object",
+          "description": "A user object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Id of a given user"
+            },
+            "name": {
+              "type": "string",
+              "description": "Name of a given user"
+            },
+            "password": {
+              "type": "string",
+              "description": "Password of a given user"
+            },
+            "admin": {
+              "type": "boolean",
+              "description": "True if user is admin, otherwise false"
+            }
+          }
+        },
+        "userResponseBody": {
+          "type": "array",
+          "description": "An array of userObjects"
+        },
+        "userRequestBody": {
+          "type": "object",
+          "description": "A user object without an id",
+          "properties": {
+            "public_id": {
+              "type": "string",
+              "description": "Public id of a given user"
+            },
+            "name": {
+              "type": "string",
+              "description": "Name of a given user"
+            },
+            "password": {
+              "type": "string",
+              "description": "Password of a given user"
+            },
+            "admin": {
+              "type": "boolean",
+              "description": "True if user is admin, otherwise false"
+            }
+          }
+        },
+        "errorObject": {
+          "type": "object",
+          "description": "An object describing an error",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "The reason for the described"
+            }
+          }
         }
-
-
       }
     }
-      }
+  }
+}
