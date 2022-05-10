@@ -20,7 +20,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#components/schemas/movieResponseBody"
+              "$ref": "#components/schemas/movie/movieResponseBody"
             }
           }
         }
@@ -34,7 +34,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/movieRequestBody"
+                "$ref": "#/components/schemas/movie/movieRequestBody"
               }
             }
           }
@@ -46,7 +46,7 @@
           "201": {
             "description": "Created",
             "schema": {
-              "$ref": "#/components/schemas/movieObject"
+              "$ref": "#/components/schemas/movie/movieObject"
             }
           }
         }
@@ -63,7 +63,7 @@
             "required": true,
             "description": "ID of the movie that we want to retrieve",
             "schema": {
-              "$ref": "#components/schemas/id"
+              "$ref": "#components/schemas/movie/id"
             }
           }
         ],
@@ -73,7 +73,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/movieObject"
+                  "$ref": "#components/schemas/movie/movieObject"
                 }
               }
             }
@@ -83,7 +83,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/errorObject"
+                  "$ref": "#components/schemas/movie/errorObject"
                 }
               }
             }
@@ -100,7 +100,7 @@
             "required": true,
             "description": "ID of the book that we want to match",
             "schema": {
-              "$ref": "#components/schemas/id"
+              "$ref": "#components/schemas/movie/id"
             }
           }
         ],
@@ -110,7 +110,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/bookObject"
+                  "$ref": "#components/schemas/movie/movieObject"
                 }
               }
             }
@@ -120,7 +120,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/errorObject"
+                  "$ref": "#components/schemas/movie/errorObject"
                 }
               }
             }
@@ -137,7 +137,7 @@
             "required": true,
             "description": "ID of the movie we want to retrieve",
             "schema": {
-              "$ref": "#components/schemas/id"
+              "$ref": "#components/schemas/movie/id"
             }
           }
         ],
@@ -147,7 +147,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/movieObject"
+                  "$ref": "#components/schemas/movie/movieObject"
                 }
               }
             }
@@ -157,7 +157,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#components/schemas/errorObject"
+                  "$ref": "#components/schemas/movie/errorObject"
                 }
               }
             }
@@ -176,7 +176,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#components/schemas/movieResponseBody"
+              "$ref": "#components/schemas/movie/movieResponseBody"
             }
           }
         }
@@ -193,7 +193,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#components/schemas/movieResponseBody"
+              "$ref": "#components/schemas/movie/movieResponseBody"
             }
           }
         }
@@ -210,7 +210,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#components/schemas/movieResponseBody"
+              "$ref": "#components/schemas/movie/movieResponseBody"
             }
           }
         }
@@ -227,7 +227,13 @@
           "401": {
             "description": "Unauthorized",
             "schema": {
-              "$ref": "#components/schemas/errorObject"
+              "$ref": "#components/schemas/login/errorObject"
+            }
+          },
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#components/schemas/login/loginResponseBody"
             }
           }
         }
@@ -235,7 +241,7 @@
     },
     "/review": {
       "get": {
-        "summary": "Get all review from the database",
+        "summary": "Get all reviews from the database",
         "description": "Get the a list with selected information items of all the reviews stored in the database",
         "produces": [
           "application/json"
@@ -376,109 +382,175 @@
 
   "components": {
     "schemas": {
-      "id": {
+      "movie": {
          "properties":{
            "id": {
              "type": "string",
              "description": "Id of a given movie"
-           }
-         }
-      },
-      "movieObject": {
-        "type": "object",
-        "description": "A movie object",
-        "properties": {
-          "movie_id": {
-            "type": "integer",
-            "description": "The id of the movie"
-          },
-          "Series_Title": {
-            "type": "text",
-            "description": "The title of the movie"
-          },
-          "Released_Year": {
-            "type": "text",
-            "description": "The release year of the movie"
-          },
-          "Runtime": {
-            "type": "text",
-            "description": "Length of the movie in minutes"
-          },
-          "Genre": {
-            "type": "text",
-            "description": "Genre of the movie"
-          },
-          "IMDB_Rating": {
-            "type": "real",
-            "description": "Rating of the movie"
+           },
+            "movieObject": {
+              "type": "object",
+              "description": "A movie object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "The id of the movie"
+                },
+                "Series_Title": {
+                  "type": "text",
+                  "description": "The title of the movie"
+                },
+                "Released_Year": {
+                  "type": "text",
+                  "description": "The release year of the movie"
+                },
+                "Runtime": {
+                  "type": "text",
+                  "description": "Length of the movie in minutes"
+                },
+                "Genre": {
+                  "type": "text",
+                  "description": "Genre of the movie"
+                },
+                "IMDB_Rating": {
+                  "type": "real",
+                  "description": "Rating of the movie"
+                  },
+                "Overview": {
+                  "type": "text",
+                  "description": "Description of the story"
+                  },
+                "Director": {
+                  "type": "text",
+                  "description": "Name of the movie director"
+                  },
+                "Star1": {
+                  "type": "text",
+                  "description": "Name of the lead actor"
+                }
+              }
             },
-          "Overview": {
-            "type": "text",
-            "description": "Description of the story"
-            },
-          "Director": {
-            "type": "text",
-            "description": "Name of the movie director"
-            },
-          "Star1": {
-            "type": "text",
-            "description": "Name of the lead actor"
-          }
-        }
-      },
-      "movieResponseBody": {
-        "type": "array",
-        "description": "An array of movieObjects"
+            "movieResponseBody": {
+              "type": "array",
+              "description": "An array of movieObjects"
 
-      },
-      "movieRequestBody": {
-        "type": "object",
-        "description": "A movie object without an id",
-        "properties": {
-          "Series_Title": {
-            "type": "text",
-            "description": "The title of the movie"
-          },
-          "Released_Year": {
-            "type": "text",
-            "description": "The release year of the movie"
-          },
-          "Runtime": {
-            "type": "text",
-            "description": "Length of the movie in minutes"
-          },
-          "Genre": {
-            "type": "text",
-            "description": "Genre of the movie"
-          },
-          "IMDB_Rating": {
-            "type": "real",
-            "description": "Rating of the movie"
             },
-          "Overview": {
-            "type": "text",
-            "description": "Description of the story"
+            "movieRequestBody": {
+              "type": "object",
+              "description": "A movie object without an id",
+              "properties": {
+                "Series_Title": {
+                  "type": "text",
+                  "description": "The title of the movie"
+                },
+                "Released_Year": {
+                  "type": "text",
+                  "description": "The release year of the movie"
+                },
+                "Runtime": {
+                  "type": "text",
+                  "description": "Length of the movie in minutes"
+                },
+                "Genre": {
+                  "type": "text",
+                  "description": "Genre of the movie"
+                },
+                "IMDB_Rating": {
+                  "type": "real",
+                  "description": "Rating of the movie"
+                  },
+                "Overview": {
+                  "type": "text",
+                  "description": "Description of the story"
+                  },
+                "Director": {
+                  "type": "text",
+                  "description": "Name of the movie director"
+                  },
+                "Star1": {
+                  "type": "text",
+                  "description": "Name of the lead actor"
+                }
+              }
             },
-          "Director": {
-            "type": "text",
-            "description": "Name of the movie director"
-            },
-          "Star1": {
-            "type": "text",
-            "description": "Name of the lead actor"
+            "errorObject": {
+              "type": "object",
+              "description": "An object describing an error",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "description": "The reason for the described"
+                }
+              }
+            }
           }
-        }
-      },
-      "errorObject": {
-        "type": "object",
-        "description": "An object describing an error",
+        },
+      "login": {
         "properties": {
-          "error": {
+          "token": {
             "type": "string",
-            "description": "The reason for the described"
+            "description": "Token for login"
           }
         }
+      },
+      "review": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id of a given review"
+          },
+          "reviewObject": {
+            "type": "object",
+            "description": "A review object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "The id of the review"
+              },
+              "text": {
+                "type": "string",
+                "description": "The body of the review"
+              },
+              "rating": {
+                "type": "integer",
+                "description": "The user rating of the movie"
+              },
+              "movie_id": {
+                "type": "integer",
+                "description": "The id of the movie"
+              }
+            }
+          },
+          "reviewResponseBody": {
+            "type": "array",
+            "description": "An array of reviewObjects"
+          },
+          "reviewRequestBody": {
+            "type": "object",
+            "description": "A review object without an id",
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "The body of the review"
+              },
+              "rating": {
+                "type": "integer",
+                "description": "The user rating of the movie"
+              },
+              "movie_id": {
+                "type": "integer",
+                "description": "The id of the movie"
+              }
+            }
+          }
+        }
+      },
+      "user": {
+
+
+        }
+
+
       }
     }
-  }
-}
+      }
