@@ -29,6 +29,10 @@ def get_all_users(current_user):
         user_data['name'] = user.name
         user_data['password'] = user.password
         user_data['admin'] = user.admin
+        user_data['links'] = {
+            'This user:': f'/api/v1.0/user/{user.id}',
+            'Reviews by this user': f'/api/v1.0/review/user/{user.id}'
+        }
         output.append(user_data)
     return jsonify({'users': output}), 200
 
@@ -49,6 +53,11 @@ def get_one_user(current_user, id):
     user_data['name'] = user.name
     user_data['password'] = user.password
     user_data['admin'] = user.admin
+    user_data['links'] = {
+        'All users:': f'/api/v1.0/user',
+        'Reviews by this user': f'/api/v1.0/review/user/{user.id}',
+        'Promote user(PUT)': f'/api/v1.0/user/{user.id}'
+    }
 
     return jsonify({'user': user_data}), 200
 
@@ -66,7 +75,9 @@ def create_user(current_user):
     from app import db
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({'message': f'User with username {username} created!'}), 200
+    last_added_user = User.query.order_by(User.id.desc()).first()
+    return jsonify({'message': f'User with username {username} created!', 'All users:': f'/api/v1.0/user', 'New user': f'/api/v1.0/user/{last_added_user.id}',
+                    'Promote new user': f'/api/v1.0/user/{last_added_user.id}'}), 200
 
 
 @bp_user.put('/user/<id>')
@@ -84,7 +95,7 @@ def promote_user(current_user, id):
     from app import db
     db.session.commit()
 
-    return jsonify({'message': f'The user has been promoted to admin.'}), 200
+    return jsonify({'message': f'The user has been promoted to admin.', 'All users:': f'/api/v1.0/user', 'Promoted user': f'/api/v1.0/user/{user.id}'}), 200
 
 
 @bp_user.delete('/user/<id>')
@@ -101,7 +112,7 @@ def delete_user(current_user, id):
     db.session.delete(user)
     db.session.commit()
 
-    return jsonify({'message': f'User has been deleted!'}), 200
+    return jsonify({'message': f'User has been deleted!', 'All users:': f'/api/v1.0/user'}), 200
 
 
 @bp_user.before_request

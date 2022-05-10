@@ -47,9 +47,11 @@ def get_one_review(current_user, review_id):
     review_data['rating'] = review.rating
     review_data['movie'] = movie.Series_Title
     review_data['links'] = {
+        'This user:': f'/api/v1.0/user/{review.user_id}',
         'All reviews': f'/api/v1.0/review',
         'All reviews by this user': f'/api/v1.0/review/user/{review.user_id}',
-        'All reviews for this movie': f'/api/v1.0/review/movie/{review.movie_id}'
+        'All reviews for this movie': f'/api/v1.0/review/movie/{review.movie_id}',
+        'Edit rating for this movie(PUT)': f'/api/v1.0/movie/setrating/{review.movie}'
     }
 
     return jsonify(review_data), 200
@@ -75,6 +77,7 @@ def get_review_by_user_id(current_user, id):
         review_data['rating'] = review.rating
         review_data['movie'] = movie.Series_Title
         review_data['links'] = {
+            'This user:': f'/api/v1.0/user/{user.id}',
             'This review': f'/api/v1.0/review/{review.id}',
             'All reviews': f'/api/v1.0/review',
             'All reviews for this movie': f'/api/v1.0/review/movie/{review.movie_id}'
