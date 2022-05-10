@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from flask import Blueprint
 
 from controllers.user_control import token_required
@@ -14,11 +16,15 @@ def get_all_reviews(current_user):
 
     output = []
     for review in reviews:
+        movie = Movie.query.filter_by(movie_id=review.movie_id).first()
         review_data = {}
         review_data['id'] = review.id
         review_data['text'] = review.text
         review_data['rating'] = review.rating
-        review_data['movie_id'] = review.movie_id
+        review_data['movie'] = movie.Series_Title
+        review_data['links'] = {
+            'reviewer': f'/api/v1.0/user/{review.user_id}'
+        }
         output.append(review_data)
 
     return jsonify({'reviews': output}), 200

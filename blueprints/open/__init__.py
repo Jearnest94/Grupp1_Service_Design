@@ -37,6 +37,8 @@ def login():
 
 @bp_open.before_request
 def logger():
+    token = request.headers.get('x-access-token')
+    print(token)
     now = datetime.datetime.utcnow()
     from sqlalchemy.sql.functions import current_user
     new_log = Log(user=current_user.name, endpoint=request.endpoint, timestamp=now)
