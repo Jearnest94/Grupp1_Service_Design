@@ -70,11 +70,11 @@ def get_one_review(current_user, review_id):
 def get_review_by_user_id(current_user, id):
     user = User.query.filter_by(id=id).first()
 
-    if not user.reviews:
-        return jsonify({'message': 'No reviews found'}), 404
-
     if not user:
         return jsonify({'message': 'User not found'}), 404
+
+    if not user.reviews:
+        return jsonify({'message': 'No reviews found'}), 404
 
     output = []
     for review in user.reviews:
