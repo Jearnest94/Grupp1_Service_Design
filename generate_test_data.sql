@@ -29,29 +29,23 @@ INSERT INTO review (id, text, rating, user_id, movie_id, title)
 VALUES ('2', 'This was a bad movie', '8', '1', '1', 'Not good');
 
 INSERT INTO review (id, text, rating, user_id, movie_id, title)
-VALUES ('3', 'This was not a movie at all', '1', '2', '2', 'I cant believe they call this a movie');
+VALUES ('3', 'This was not a movie at all', '1', '5', '2', 'I cant believe they call this a movie');
 
 INSERT INTO review (id, text, rating, user_id, movie_id, title)
-VALUES ('4', 'Super nice movie', '10', '2', '2', 'Review title 4');
+VALUES ('4', 'I watched this with my little brother John and I fell asleep. Good acting though.', '9', '4', '3', 'Review title 6');
 
 INSERT INTO review (id, text, rating, user_id, movie_id, title)
-VALUES ('5', 'Incredible movie', '9', '3', '3', 'WoW!');
+VALUES ('5', 'I cant remember the last time I saw a movie.', '11', '5', '9', 'Adobe Photoshop');
 
 INSERT INTO review (id, text, rating, user_id, movie_id, title)
-VALUES ('6', 'I watched this with my little brother John and I fell asleep. Good acting though.', '9', '2', '3', 'Review title 6');
+VALUES ('6', 'I cant remember the last time I saw a movie.', '11', '5', '10', 'Adobe Photoshop');
 
 INSERT INTO review (id, text, rating, user_id, movie_id, title)
-VALUES ('7', 'I cant remember the last time I saw a movie.', '11', '5', '1', 'Adobe Photoshop');
+VALUES ('7', 'Good movie, but I really think Adam Sandler should have been in this one', '8', '6', '2', 'Sandler coulda made it better');
 
 INSERT INTO review (id, text, rating, user_id, movie_id, title)
-VALUES ('8', 'I cant remember the last time I saw a movie.', '11', '5', '2', 'Adobe Photoshop');
+VALUES ('8', 'This is the first movie that made me cry!', '4', '7', '15', 'An emotional trip through life');
 
 INSERT INTO review (id, text, rating, user_id, movie_id, title)
-VALUES ('9', 'Good movie, but I really think Adam Sandler should have been in this one', '8', '6', '2', 'Sandler coulda made it better');
-
-INSERT INTO review (id, text, rating, user_id, movie_id, title)
-VALUES ('10', 'This is the first movie that made me cry!', '4', '7', '2', 'An emotional trip through life');
-
-INSERT INTO review (id, text, rating, user_id, movie_id, title)
-VALUES ('8', 'Best movie I have ever seen. And I dont even like movies', '9', '8', '4', 'It made me think');
+VALUES ('9', 'Best movie I have ever seen. And I dont even like movies', '9', '8', '4', 'It made me think');
 
