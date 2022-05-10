@@ -38,14 +38,12 @@ def login():
 @bp_open.before_request
 def logger():
     token = request.headers.get('x-access-token')
-    print(token)
+    user = User.query.filter_by(latesttoken=token).first()
     now = datetime.datetime.utcnow()
-    from sqlalchemy.sql.functions import current_user
-    new_log = Log(user=current_user.name, endpoint=request.endpoint, timestamp=now)
+    new_log = Log(user=user.name, endpoint=request.endpoint, timestamp=now)
     from app import db
     db.session.add(new_log)
     db.session.commit()
-    print(f'API accessed {request.endpoint} \t {now.strftime("%Y-%m-%d %H:%M:%S")}')
-
+    print(f'API Accessed - User: {user.name} - Endpoint: {request.endpoint} \t {now.strftime("%Y-%m-%d %H:%M:%S")}')
 
 

@@ -1,13 +1,14 @@
 """
 CRUD for endpoint user
 """
+import datetime
 import uuid
 
 from flask import Blueprint
 from werkzeug.security import generate_password_hash
 
 from controllers.user_control import token_required
-from models import User
+from models import User, Log
 from flask import request, jsonify
 
 bp_user = Blueprint('bp_user', __name__)
@@ -101,3 +102,15 @@ def delete_user(current_user, id):
     db.session.commit()
 
     return jsonify({'message': f'User has been deleted!'}), 200
+
+
+@bp_user.before_request
+def logger():
+    token = request.headers.get('x-access-token')
+    user = User.query.filter_by(latesttoken=token).first()
+    now = datetime.datetime.utcnow()
+    new_log = Log(user=user.name, endpoint=request.endpoint, timestamp=now)
+    from app import db
+    db.session.add(new_log)
+    db.session.commit()
+    print(f'API Accessed - User: {user.name} - Endpoint: {request.endpoint} \t {now.strftime("%Y-%m-%d %H:%M:%S")}')
