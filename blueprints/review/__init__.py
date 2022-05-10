@@ -1,9 +1,7 @@
 import datetime
-from collections import OrderedDict
 
 from flask import Blueprint
 
-from blueprints.open import logger
 from controllers.user_control import token_required
 from models import Review, Movie, User, Log
 from flask import request, jsonify
@@ -25,7 +23,9 @@ def get_all_reviews(current_user):
         review_data['rating'] = review.rating
         review_data['movie'] = movie.Series_Title
         review_data['links'] = {
-            'reviewer': f'/api/v1.0/user/{review.user_id}'
+            'This review': f'/api/v1.0/review/{review.id}',
+            'All reviews by this user': f'/api/v1.0/review/user/{review.user_id}',
+            'All reviews for this movie': f'/api/v1.0/review/movie/{review.movie_id}'
         }
         output.append(review_data)
 
@@ -40,11 +40,17 @@ def get_one_review(current_user, review_id):
     if not review:
         return jsonify({'message': 'No review found'}), 404
 
+    movie = Movie.query.filter_by(movie_id=review.movie_id).first()
     review_data = {}
     review_data['id'] = review.id
     review_data['text'] = review.text
     review_data['rating'] = review.rating
-    review_data['movie_id'] = review.movie_id
+    review_data['movie'] = movie.Series_Title
+    review_data['links'] = {
+        'All reviews': f'/api/v1.0/review',
+        'All reviews by this user': f'/api/v1.0/review/user/{review.user_id}',
+        'All reviews for this movie': f'/api/v1.0/review/movie/{review.movie_id}'
+    }
 
     return jsonify(review_data), 200
 
@@ -62,11 +68,17 @@ def get_review_by_user_id(current_user, id):
 
     output = []
     for review in user.reviews:
+        movie = Movie.query.filter_by(movie_id=review.movie_id).first()
         review_data = {}
         review_data['id'] = review.id
         review_data['text'] = review.text
         review_data['rating'] = review.rating
-        review_data['movie_id'] = review.movie_id
+        review_data['movie'] = movie.Series_Title
+        review_data['links'] = {
+            'This review': f'/api/v1.0/review/{review.id}',
+            'All reviews': f'/api/v1.0/review',
+            'All reviews for this movie': f'/api/v1.0/review/movie/{review.movie_id}'
+        }
         output.append(review_data)
 
     return jsonify({f'Reviews by user with id: {id}': output}), 200
@@ -74,7 +86,7 @@ def get_review_by_user_id(current_user, id):
 
 @bp_review.get('review/movie/<movie_id>')
 @token_required
-def get_reviews_by_movie_id(current_user, movie_id):
+def get_review_by_movie_id(current_user, movie_id):
     movie = Movie.query.filter_by(movie_id=movie_id).first()
     output = []
 
@@ -83,7 +95,12 @@ def get_reviews_by_movie_id(current_user, movie_id):
         review_data['id'] = review.id
         review_data['text'] = review.text
         review_data['rating'] = review.rating
-        review_data['movie_id'] = review.movie_id
+        review_data['movie'] = movie.Series_Title
+        review_data['links'] = {
+            'This review': f'/api/v1.0/review/{review.id}',
+            'All reviews': f'/api/v1.0/review',
+            'All reviews by this user': f'/api/v1.0/review/user/{review.user_id}'
+        }
         output.append(review_data)
     return jsonify({f'Reviews for movie with id: {movie_id}': output}), 200
 
@@ -93,11 +110,13 @@ def get_reviews_by_movie_id(current_user, movie_id):
 def create_review(current_user):
     data = request.get_json()
     new_review = Review(text=data['text'], rating=data['rating'], movie_id=data['movie_id'], user_id=current_user.id)
+    movie_id = data['movie_id']
     from app import db
     db.session.add(new_review)
     db.session.commit()
 
-    return jsonify({'message': 'Review added!'}), 201
+    return jsonify({'message': 'Review added!', 'All reviews for this movie': f'/api/v1.0/review/movie/{movie_id}',
+                    'All reviews by this user': f'/api/v1.0/user/{current_user.id}'}), 201
 
 
 @bp_review.put('/review/setrating/<review_id>')
@@ -113,7 +132,7 @@ def set_rating(current_user, review_id):
     from app import db
     db.session.commit()
 
-    return jsonify({'message': 'Rating adjusted.'}), 200
+    return jsonify({'message': 'Rating adjusted.', 'This review': f'/api/v1.0/review/{review_id}'}), 200
 
 
 @bp_review.delete('/review/<review_id>')
@@ -122,13 +141,13 @@ def delete_review(current_user, review_id):
     review = Review.query.filter_by(id=review_id, user_id=current_user.id).first()
 
     if not review:
-        return jsonify({'message': 'Nothing here to delete.'}), 204 # Tror att denna ska vara 404
+        return jsonify({'message': 'Nothing here to delete.'}), 404
 
     from app import db
     db.session.delete(review)
     db.session.commit()
 
-    return jsonify({'message': f'Review with id {review_id} deleted'}), 200
+    return jsonify({'message': f'Review with id {review_id} deleted', 'All reviews': f'/api/v1.0/review'}), 200
 
 
 @bp_review.before_request
