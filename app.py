@@ -10,17 +10,15 @@ from dotenv import load_dotenv
 
 load_dotenv('.env')
 
-
-
 # Swagger specific items
 SWAGGER_URL = '/documentation'
 SWAGGER_JSON = '/static/swagger.json'
 SWAGGER_BLUEPRINT = get_swaggerui_blueprint(
-     SWAGGER_URL,
-     SWAGGER_JSON,
-     config={
-         'app_name': 'IMDB Top 1000 films api'
-     }
+    SWAGGER_URL,
+    SWAGGER_JSON,
+    config={
+        'app_name': 'IMDB Top 1000 films api'
+    }
 )
 
 

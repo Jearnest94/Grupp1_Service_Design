@@ -1,3 +1,5 @@
+import os
+
 from flask import Blueprint
 
 from models import User, Log
@@ -24,7 +26,7 @@ def login():
     if check_password_hash(user.password, auth.password):
         token = jwt.encode(
             {'id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=600)},
-            '123secret')
+            os.getenv("APP_SECRET"))
         from app import db
         user.latesttoken = token
         db.session.commit()
