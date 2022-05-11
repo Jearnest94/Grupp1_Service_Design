@@ -1,15 +1,17 @@
+"""
+Unit tests for user endpoint
+"""
 import json
 
-import flask
+# import flask
 
-from models import Movie, User
-from flask import request, jsonify, make_response
+from models import User
+# , Movie
 
-import pytest
-import requests
-
-from .fixture import client
-
+# from flask import request, jsonify, make_response
+# import pytest
+# import requests
+# from .fixture import client
 
 def test_user_models(client):
     user = User(public_id=6000, name='admin')
@@ -21,8 +23,8 @@ def test_user_status_code(client):
     assert response.status_code == 200
     assert b'test' in response.datadef
 
-def test_user_get_token(client):
 
+def test_user_get_token(client):
     import requests
 
     url = "http://localhost:5000/api/v1.0/login"
@@ -32,12 +34,15 @@ def test_user_get_token(client):
     print(response.status_code)
     print(response.json())
 
+
 # def test_user_token(client):
 #
 #     import requests
 #
 #     url = "http://localhost:5000/api/v1.0/user"
-#     header = {"x-access-token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYwMDAiLCJleHAiOjE2NTIyMjM4MTl9.vUK1_I8K041sZk2YgXmk8sE3Ig828pWnsptifB13fC4"}
+#     header = {"x-access-token":
+#     "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYwMDAiLCJleHAiOjE2NTIyMjM4MTl9.
+#     vUK1_I8K041sZk2YgXmk8sE3Ig828pWnsptifB13fC4"}
 #     response = requests.get(url, headers=header)
 #     print(response.status_code)
 #     print(response.json())
@@ -67,7 +72,7 @@ def test_post_and_delete_user(client):
 
     obj_to_post = {
         "id": 3,
-        "id": 3000,
+        "public_id": 3000,
         "name": 'fisk',
         "password": "321",
         "admin": "true",
@@ -87,7 +92,7 @@ def test_post_and_delete_user(client):
     # id = numbers[0000]
 
     # Update url and check that new movie is in the db
-    url = f'http://localhost:5000/api/v.1.0/user/3000'
+    url = "http://localhost:5000/api/v.1.0/user/3000"
 
     response2 = client.get(url)
     data = json.loads(response2.text)
@@ -101,5 +106,3 @@ def test_post_and_delete_user(client):
 
     response4 = client.get(url)
     assert response4.status_code == 404
-
-

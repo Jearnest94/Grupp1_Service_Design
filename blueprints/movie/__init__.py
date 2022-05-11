@@ -3,12 +3,9 @@ CRUD for endpoint movie
 """
 import datetime
 
-from flask import Blueprint
-
+from flask import request, jsonify, Blueprint
 from models import Movie, User, Log
 
-from flask import request, jsonify
-from models import Movie
 from app import db
 
 bp_movie = Blueprint('bp_movie', __name__)
@@ -60,7 +57,7 @@ def create_movie():
     return jsonify({'message': f'The movie {new_movie.Series_Title} '
                                f'with movie_id {new_movie.movie_id} added!',
                     'This movie': f'/api/v1.0/movie/{last_added_movie.id}',
-                    'All movies': f'/api/v1.0/movie'}), 201
+                    'All movies': "/api/v1.0/movie"}), 201
 
 
 @bp_movie.get('/movie/<movie_id>')
@@ -71,10 +68,10 @@ def get_one_movie(movie_id):
     """
 
     movie = Movie.query.filter_by(movie_id=movie_id).first()
-    
+
     if not movie:
         return jsonify({'message': f'Movie with movie_id {movie_id} not found!',
-                        'All movies': f'/api/v1.0/movie'}), 404
+                        'All movies': "api/v1.0/movie"}), 404
 
     movie_data = {}
     movie_data['movie_id'] = movie.movie_id
@@ -87,7 +84,7 @@ def get_one_movie(movie_id):
     movie_data['Director'] = movie.Director
     movie_data['Star1'] = movie.Star1
     movie_data['links'] = {
-        'All movies': f'/api/v1.0/movie',
+        'All movies': '/api/v1.0/movie',
         'All reviews for this movie': f'/api/v1.0/review/movie/{movie.movie_id}'
     }
 
@@ -102,7 +99,7 @@ def alter_movie_details(movie_id):
     """
     movie = Movie.query.filter_by(movie_id=movie_id).first()
     if not movie:
-        return jsonify({f'message': 'Movie not found!', 'All movies': f'/api/v1.0/movie'}), 404
+        return jsonify({'message': 'Movie not found!', 'All movies': "/api/v1.0/movie"}), 404
 
     data = request.get_json()
     new_movie = Movie(Series_Title=data['Series_Title'], Released_Year=data['Released_Year'],
@@ -113,8 +110,9 @@ def alter_movie_details(movie_id):
 
     db.session.commit()
 
-    return jsonify({'message': f'The movie {movie.Series_Title} with movie_id {movie.movie_id} updated!',
-                    'This movie': f'/api/v1.0/movie/{movie.movie_id}', 'All movies': f'/api/v1.0/movie'}), 202
+    return jsonify({'message': f'The movie {movie.Series_Title} with movie_id {movie.movie_id} '
+                               f''f'updated!', 'This movie': f'/api/v1.0/movie/{movie.movie_id}',
+                    'All movies': "/api/v1.0/movie"}), 202
 
 
 @bp_movie.delete('/movie/<movie_id>')
@@ -126,25 +124,28 @@ def delete_movie(movie_id):
 
     movie = Movie.query.filter_by(movie_id=movie_id).first()
     if not movie:
-        return jsonify({"message": f'{movie.Series_Title} with movie_id '
-                                   f'{movie.movie_id} not found!', 'All movies': f'/api/v1.0/movie'}), 404
+        return jsonify({'message': f'{movie.Series_Title} with movie_id '
+                                   f'{movie.movie_id} not found!',
+                        'All movies': "/api/v1.0/movie"}), 404
 
     db.session.delete(movie)
     db.session.commit()
-    return jsonify({"message": f'The movie {movie.Series_Title} with movie_id '
-                               f'{movie.movie_id} deleted!', 'All movies': f'/api/v1.0/movie'}), 200
+    return jsonify({'message': f'The movie {movie.Series_Title} with movie_id '
+                               f'{movie.movie_id} deleted!', 'All movies': "/api/v1.0/movie"}), 200
 
 
 @bp_movie.get('movie/rating/<float:rating>')
 def get_movies_by_rating(rating):
     """
     :param rating: get all the movies with that rating
+    :type float
     :return: printing out all the movies with that rating
     """
 
     movies = Movie.query.filter_by(IMDB_Rating=rating).all()
     if not movies:
-        return jsonify({"message": f'No movies with rating {rating} found', 'All movies': f'/api/v1.0/movie'}), 404
+        return jsonify({'message': f'No movies with rating {rating} found',
+                        'All movies': "/api/v1.0/movie"}), 404
 
     output = []
     for movie in movies:
@@ -172,7 +173,8 @@ def get_movies_by_year(year):
 
     movies = Movie.query.filter_by(Released_Year=year).all()
     if not movies:
-        return jsonify({"message": f'No movies released year {year} found', 'All movies': f'/api/v1.0/movie'}), 404
+        return jsonify({'message': f'No movies released year {year} found',
+                        'All movies': "/api/v1.0/movie"}), 404
 
     output = []
     for movie in movies:
@@ -201,7 +203,8 @@ def get_movies_by_director(director):
 
     movies = Movie.query.filter_by(Director=director).all()
     if not movies:
-        return jsonify({"message": f'No movies directed by {director} found', 'All movies': f'/api/v1.0/movie'}), 404
+        return jsonify({'message': f'No movies directed by {director} found',
+                        'All movies': "/api/v1.0/movie"}), 404
 
     output = []
     for movie in movies:
@@ -222,12 +225,14 @@ def get_movies_by_director(director):
 
 @bp_movie.before_request
 def logger():
+    """
+    :return: Logs API Activity into log table in database
+    """
     token = request.headers.get('x-access-token')
     user = User.query.filter_by(latesttoken=token).first()
     now = datetime.datetime.utcnow()
     new_log = Log(user=user.name, endpoint=request.endpoint, timestamp=now)
-    from app import db
     db.session.add(new_log)
     db.session.commit()
-    print(f'API Accessed - User: {user.name} - Endpoint: {request.endpoint} \t {now.strftime("%Y-%m-%d %H:%M:%S")}')
-
+    print(f'API Accessed - User: {user.name} - Endpoint: {request.endpoint} '
+          f'\t {now.strftime("%Y-%m-%d %H:%M:%S")}')

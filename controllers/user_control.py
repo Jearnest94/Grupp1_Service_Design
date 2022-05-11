@@ -1,10 +1,14 @@
+"""
+Controllers for users
+"""
 import os
 from functools import wraps
 
 import jwt
 
-from models import User
 from flask import request, jsonify
+from models import User
+
 
 
 def token_required(f):
