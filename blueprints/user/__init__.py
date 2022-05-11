@@ -18,7 +18,7 @@ bp_user = Blueprint('bp_user', __name__)
 @token_required
 def get_all_users(current_user):
     if not current_user.admin:
-        return jsonify({'message': 'Cannot perform that function! Check your privilegies.'}), 403
+        return jsonify({'message': 'Cannot perform that function! Check your privileges.'}), 403
 
     users = User.query.all()
 
@@ -41,7 +41,7 @@ def get_all_users(current_user):
 @token_required
 def get_one_user(current_user, id):
     if not current_user.admin:
-        return jsonify({'message': 'Cannot perform that function! Check your privilegies.'}), 403
+        return jsonify({'message': 'Cannot perform that function! Check your privileges.'}), 403
 
     user = User.query.filter_by(id=id).first()
 
@@ -67,7 +67,7 @@ def get_one_user(current_user, id):
 @token_required
 def create_user(current_user):
     if not current_user.admin:
-        return jsonify({'message': 'Cannot perform that function! Check your privilegies.'}), 403
+        return jsonify({'message': 'Cannot perform that function! Check your privileges.'}), 403
 
     data = request.get_json()
     hashed_password = generate_password_hash(data['password'], method='sha256')
@@ -85,7 +85,7 @@ def create_user(current_user):
 @token_required
 def promote_user(current_user, id):
     if not current_user.admin:
-        return jsonify({'message': 'Cannot perform that function! Check your privilegies.'}), 403
+        return jsonify({'message': 'Cannot perform that function! Check your privileges.'}), 403
 
     user = User.query.filter_by(id=id).first()
 
@@ -108,6 +108,7 @@ def delete_user(current_user, id):
     user = User.query.filter_by(id=id).first()
     if not user:
         return jsonify({'message': 'No user found!', 'All users': f'/api/v1.0/user'}), 404
+
 
     from app import db
     db.session.delete(user)
