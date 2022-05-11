@@ -5,8 +5,9 @@ import os
 
 from flask import Flask
 from flask_swagger_ui import get_swaggerui_blueprint
-from models import db
 from dotenv import load_dotenv
+from models import db
+
 
 load_dotenv('.env')
 
@@ -23,6 +24,9 @@ SWAGGER_BLUEPRINT = get_swaggerui_blueprint(
 
 
 def create_app():
+    """
+    :return: Returns the flask app
+    """
     app = Flask(__name__)
     app.config['SECRET_KEY'] = '123secret'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
