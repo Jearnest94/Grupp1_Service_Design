@@ -180,6 +180,12 @@
             "schema": {
               "$ref": "#components/schemas/movie/movieResponseBody"
             }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#components/schemas/review/errorObject"
+            }
           }
         }
       }
@@ -197,6 +203,12 @@
             "schema": {
               "$ref": "#components/schemas/movie/movieResponseBody"
             }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#components/schemas/review/errorObject"
+            }
           }
         }
       }
@@ -213,6 +225,12 @@
             "description": "OK",
             "schema": {
               "$ref": "#components/schemas/movie/movieResponseBody"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#components/schemas/review/errorObject"
             }
           }
         }
@@ -645,9 +663,17 @@
                 "type": "integer",
                 "description": "The user rating of the movie"
               },
-              "movie_id": {
-                "type": "integer",
-                "description": "The id of the movie"
+              "title": {
+                "type": "varchar",
+                "description": "Title of the review"
+              },
+              "Series_Title": {
+                "type": "text",
+                "description": "The name of the movie"
+              },
+              "author": {
+                "type": "varchar",
+                "description": "The author of the review"
               }
             }
           },
@@ -659,6 +685,10 @@
             "type": "object",
             "description": "A review object without an id",
             "properties": {
+              "title": {
+                "type": "varchar",
+                "description": "Title of the review"
+              },
               "text": {
                 "type": "string",
                 "description": "The body of the review"
@@ -670,6 +700,10 @@
               "movie_id": {
                 "type": "integer",
                 "description": "The id of the movie"
+              },
+              "user_id": {
+                "type": "integer",
+                "description": "The id of the user"
               }
             }
           },
