@@ -45,5 +45,3 @@ def logger():
     db.session.add(new_log)
     db.session.commit()
     print(f'API Accessed - User: {user.name} - Endpoint: {request.endpoint} \t {now.strftime("%Y-%m-%d %H:%M:%S")}')
-
-
